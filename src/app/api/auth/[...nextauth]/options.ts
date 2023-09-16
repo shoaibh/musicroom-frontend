@@ -1,6 +1,28 @@
-import { NextAuthOptions } from "next-auth";
+import { Awaitable, NextAuthOptions, User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import HttpResponse from "@/app/libs/http-response";
+import { JWT } from "next-auth/jwt";
+
+async function refreshToken(token: JWT): Promise<JWT> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/refresh`,
+    {
+      method: "POST",
+      headers: {
+        refreshtoken: `${token.backendTokens.refreshToken}`,
+      },
+    }
+  );
+  console.log("refreshed");
+
+  const response = await res.json();
+
+  return {
+    ...token,
+    backendTokens: response,
+  };
+}
 
 export const options: NextAuthOptions = {
   providers: [
@@ -11,10 +33,10 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username:",
+        email: {
+          label: "Email:",
           type: "text",
-          placeholder: "username",
+          placeholder: "email",
         },
         password: {
           label: "Password:",
@@ -23,38 +45,88 @@ export const options: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        const user = { id: "42", name: "shoaib", password: "sdfdf" };
-        if (
-          credentials?.username == user.name &&
-          credentials?.password == user.password
-        ) {
-          return user;
-        } else {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          }
+        );
+        if (response.status === 401) {
           return null;
         }
+        if (response.status !== 200) {
+          throw new Error("something went wrong");
+        }
+        const r = await response.json();
+
+        const user = r.data;
+
+        return user;
       },
     }),
   ],
+  debug: process.env.NODE_ENV === "development",
   theme: {
     colorScheme: "dark", // "auto" | "dark" | "light"
     brandColor: "", // Hex color code
     logo: "", // Absolute URL to image
     buttonText: "", // Hex color code
   },
-  // callbacks: {
-  //   async signIn({ user, account, profile, email, credentials }) {
-  //     console.log("==", { user, account, profile, email, credentials });
-  //     if (user) return false;
-  //     return true;
-  //   },
-  //   async redirect({ url, baseUrl }) {
-  //     // Allows relative callback URLs
-  //     if (url.startsWith("/")) return `${baseUrl}${url}`;
-  //     // Allows callback URLs on the same origin
-  //     else if (new URL(url).origin === baseUrl) return url;
-  //     return baseUrl;
-  //   },
-  // },
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      // console.log("==", { account, user });
+      if (account?.provider === "google") {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/oauth/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: user?.email,
+              name: user?.name,
+              image: user?.image,
+              oAuthId: user?.id,
+            }),
+          }
+        );
+        if (response.status !== 201) {
+          throw new Error("something went wrong");
+        }
+        const r = await response.json();
+
+        const oAuthuser = r.data;
+
+        return oAuthuser;
+      } else {
+        return true;
+      }
+    },
+    async jwt({ token, user }) {
+      console.log("==jwt", { token, user, d: new Date().getTime() });
+      if (user) return { ...token, ...user };
+
+      if (new Date().getTime() < token.backendTokens.expiresIn) return token;
+
+      return await refreshToken(token);
+    },
+    async session({ token, session }) {
+      console.log("==sdfsdfs", { token, session });
+
+      session.user = token.user;
+      session.backendTokens = token.backendTokens;
+
+      return session;
+    },
+  },
   pages: {
     signIn: "/auth/signin",
   },

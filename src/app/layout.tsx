@@ -1,5 +1,7 @@
+import ToasterContext from "@/Context/ToasterContext";
 import "./globals.css";
 import type { Metadata } from "next";
+import toast, { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ToasterContext />
+        {children}
+      </body>
     </html>
   );
 }
