@@ -2,6 +2,7 @@ import React from "react";
 import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
+import { Room } from "./room";
 
 export const Rooms = async () => {
   // const token = await getToken()
@@ -19,11 +20,13 @@ export const Rooms = async () => {
 
   const rooms = r.data;
 
+  console.log("room", { rooms, session });
+
   if (rooms?.length) {
     return (
       <>
         {rooms.map((r: Room) => (
-          <div>{r.name}</div>
+          <Room name={r.name} id={r.id} />
         ))}
       </>
     );

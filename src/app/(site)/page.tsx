@@ -3,22 +3,24 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { Rooms } from "./rooms/page";
 import LogoutButton from "@/components/LogoutButton";
+import { User } from "./header/user";
+import { SearchBar } from "@/components/searchBar";
 
 export default async function Home() {
   const session = await getServerSession(options);
-  // console.log("==", { session });
+  console.log("==client", { session });
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {session && session.user.name ? (
+    <main className=" min-h-screen  p-7">
+      {session && session.user?.name && (
         <>
-          {session.user.name}
+          <div className="flex justify-between w-full">
+            <SearchBar />
+            {/* <Notification /> */}
+            <User user={session.user} />
+          </div>
+
           <Rooms />
-          <LogoutButton />
         </>
-      ) : (
-        <h1>
-          login please <LogoutButton />
-        </h1>
       )}
     </main>
   );

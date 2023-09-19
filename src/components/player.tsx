@@ -3,6 +3,7 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import ReactAudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
+import "./player.css";
 
 interface Props {
   videoId?: string;
@@ -11,6 +12,8 @@ interface Props {
 const Player: FC<Props> = ({ videoId }) => {
   const audioRef = useRef(null);
   const [audioSrc, setAudioSrc] = useState("");
+
+  console.log("==", { videoId });
 
   useEffect(() => {
     // let audio = audioRef.current.audio.current;

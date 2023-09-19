@@ -110,16 +110,22 @@ export const options: NextAuthOptions = {
         return true;
       }
     },
-    async jwt({ token, user }) {
-      console.log("==jwt", { token, user, d: new Date().getTime() });
-      if (user) return { ...token, ...user };
+    async jwt(props) {
+      console.log("==jwt", { props });
+      const { token, user, account, profile } = props;
+      console.log("==", { account });
+      if (user || account?.provider === "google") return { ...token, ...user };
 
-      if (new Date().getTime() < token.backendTokens.expiresIn) return token;
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+      // if (new Date().getTime() < token.backendTokens?.expiresIn) return token;
 
-      return await refreshToken(token);
+      // return await refreshToken(token);
     },
-    async session({ token, session }) {
-      console.log("==sdfsdfs", { token, session });
+    async session({ token, session, user }) {
+      console.log("==sdfsdfs", { token, session, user });
 
       session.user = token.user;
       session.backendTokens = token.backendTokens;
