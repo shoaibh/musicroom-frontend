@@ -16,16 +16,16 @@ export const SearchBar: FC<Props> = ({ iconShow = true }) => {
   const handleSubmit = () => {};
 
   return (
-    <div className="flex bg-white">
+    <div className="flex" onBlur={() => setShowIcon(true)}>
       <form onSubmit={handleSubmit}>
         {showIcon ? (
           <span
             onClick={() => {
               setShowIcon(false);
             }}
-            className="cursor-pointer"
+            className="cursor-pointer block w-[25px] h-[25px]"
           >
-            <BsSearch />
+            <BsSearch className="w-full h-full" />
           </span>
         ) : (
           <Input
@@ -36,7 +36,8 @@ export const SearchBar: FC<Props> = ({ iconShow = true }) => {
             type="search"
             required
             placeholder="search song"
-            // onBlur={() => setShowIcon(true)}
+            className="bg-white"
+            onBlur={() => setShowIcon(true)}
           />
         )}
       </form>

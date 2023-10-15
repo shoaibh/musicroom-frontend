@@ -8,7 +8,6 @@ import { SearchBar } from "@/components/searchBar";
 
 export default async function Home() {
   const session = await getServerSession(options);
-  console.log("==client", { session });
   return (
     <main className=" min-h-screen  p-7">
       {session && session.user?.name && (

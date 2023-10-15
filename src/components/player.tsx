@@ -20,7 +20,9 @@ const Player: FC<Props> = ({ videoId }) => {
     // audio.preload = "metadata";
     // console.log(videoId)
     if (videoId)
-      setAudioSrc(`http://localhost:5001/song/play?videoId=${videoId}`);
+      setAudioSrc(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/song/play?videoId=${videoId}`
+      );
     // audio.onloadedmetadata = () => {
     //     setDuration(Math.round(audio.duration));
     // };

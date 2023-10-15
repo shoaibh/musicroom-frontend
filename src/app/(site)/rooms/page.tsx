@@ -26,7 +26,7 @@ export const Rooms = async () => {
     return (
       <>
         {rooms.map((r: Room) => (
-          <Room name={r.name} id={r.id} />
+          <Room name={r.name} id={r.id} key={r.id} />
         ))}
       </>
     );

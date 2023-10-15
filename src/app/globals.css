@@ -20,6 +20,10 @@ body {
   color: rgb(var(--foreground-rgb));
   background: white;
 }
+
+*{
+  outline: none;
+}
  
 @layer base {
   :root {
