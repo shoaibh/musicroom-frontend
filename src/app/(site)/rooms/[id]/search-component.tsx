@@ -44,8 +44,10 @@ const SearchComponent: FC<Props> = ({
       <Input
         value={search}
         onChange={(e) => {
-          setSearch(e.target.value);
-          debouncedF(e.target.value);
+          if (!!e.target.value) {
+            setSearch(e.target.value);
+            debouncedF(e.target.value);
+          }
         }}
         id="search"
         name="search"
