@@ -1,10 +1,8 @@
-import { Music } from "@/components/music";
 import { options } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
-import { Rooms } from "./rooms/page";
-import LogoutButton from "@/components/LogoutButton";
-import { User } from "./header/user";
 import { SearchBar } from "@/components/searchBar";
+import { getServerSession } from "next-auth";
+import { User } from "./header/user";
+import { AllRooms } from "./rooms/all-rooms";
 import { CreateRoom } from "./rooms/create-room";
 
 export default async function Home() {
@@ -19,13 +17,13 @@ export default async function Home() {
             <User user={session.user} />
           </div>
 
-          <Rooms />
+          {session?.backendTokens?.jwt && (
+            <AllRooms jwt={session.backendTokens.jwt} />
+          )}
 
           <div className="fixed bottom-[40px] left-1/2 transform -translate-x-1/2">
-            <CreateRoom  jwt={`${session?.backendTokens?.jwt}`} />
+            <CreateRoom jwt={`${session?.backendTokens?.jwt}`} />
           </div>
-
-
         </>
       )}
     </main>

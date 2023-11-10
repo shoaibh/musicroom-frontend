@@ -1,6 +1,9 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import AudioRoom from "./AudioRoom";
+import SearchComponent from "./search-component";
+import axios from "@/app/libs/axios-config";
+import { ChatComponent } from "./chat-component";
 
 export default async function PlayerRoom({
   params,
@@ -8,7 +11,8 @@ export default async function PlayerRoom({
   params: { id: string };
 }) {
   const session = await getServerSession(options);
-  const response = await fetch(
+
+  const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/room/${params.id}`,
     {
       method: "GET",
@@ -19,16 +23,25 @@ export default async function PlayerRoom({
     }
   );
 
-  const res = await response.json();
+  const response = await res.json();
+
+  const isOwner = response?.data?.ownerId === session?.user?.id;
 
   return (
     <div className="h-[100vh] flex flex-col justify-between">
-      {res.success && (
+      <div className="flex justify-center w-full pt-5 flex-col">
+        {session?.backendTokens?.jwt && isOwner && (
+          <SearchComponent id={params.id} jwt={session.backendTokens.jwt} />
+        )}
+      </div>
+      {session?.user && params.id && (
+        <ChatComponent user={session.user} roomId={params.id} />
+      )}
+      {session?.backendTokens?.jwt && (
         <AudioRoom
-          res={res}
-          session={session}
+          jwt={session.backendTokens.jwt}
           id={params.id}
-          videoId={res.data.videoId}
+          isOwner={isOwner}
         />
       )}
     </div>

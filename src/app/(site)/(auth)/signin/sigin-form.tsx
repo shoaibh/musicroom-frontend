@@ -1,35 +1,23 @@
 "use client";
 
-import type {
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
-import {
-  ClientSafeProvider,
-  LiteralUnion,
-  getProviders,
-  signIn,
-} from "next-auth/react";
-import { getServerSession } from "next-auth/next";
-import { options } from "../../../api/auth/[...nextauth]/options";
-import { ChangeEvent, FC, FormEvent, useState } from "react";
+import SocialButton from "@/components/social-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
 import { BuiltInProviderType } from "next-auth/providers/index";
-import SocialButton from "@/components/social-button";
-import { BsGoogle } from "react-icons/bs";
+import { ClientSafeProvider, LiteralUnion, signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ChangeEvent, FC, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
+import { BsGoogle } from "react-icons/bs";
 
 interface Props {
   providers: Record<

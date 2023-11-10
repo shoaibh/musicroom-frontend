@@ -53,7 +53,9 @@ export const Room: FC<Props> = ({
               height={20}
               alt="current song"
             />
-            <span className="opacity-70">{currentSong}</span>
+            <span className="opacity-70 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+              {currentSong}
+            </span>
           </div>
         </CardFooter>
       </Card>

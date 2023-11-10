@@ -1,8 +1,5 @@
 "use client";
 
-import { User as IUser } from "next-auth";
-import Image from "next/image";
-import React, { FC } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import LogoutButton from "@/components/LogoutButton";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
+import { FC } from "react";
 
 interface Props {
   user: { id: Number; name: string; email: string; image: string };

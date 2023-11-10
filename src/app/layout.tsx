@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import toast, { Toaster } from "react-hot-toast";
 import TanstackProvider from "@/Context/TanstackProvider";
+import { SocketProvider } from "@/Context/SocketProvider";
 
 export const metadata: Metadata = {
   title: "Music Room",
@@ -17,10 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <TanstackProvider >        <ToasterContext />
-          {children}
+        <SocketProvider>
+          <TanstackProvider>
+            <ToasterContext />
+            {children}
           </TanstackProvider>
-
+        </SocketProvider>
       </body>
     </html>
   );

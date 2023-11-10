@@ -1,7 +1,5 @@
-import { options } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
 import Image from "next/image";
-import React, { FC } from "react";
+import { FC } from "react";
 
 interface Props {
   info: any;
@@ -9,7 +7,7 @@ interface Props {
 
 export const SongDetails: FC<Props> = ({ info }) => {
   return (
-    <div className="flex p-[30px] ">
+    <div className="flex p-[20px] ">
       <Image
         src={info?.image || "/default-song.png"}
         width={54}

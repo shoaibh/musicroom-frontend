@@ -14,7 +14,6 @@ async function refreshToken(token: JWT): Promise<JWT> {
       },
     }
   );
-  console.log("refreshed");
 
   const response = await res.json();
 
@@ -81,7 +80,6 @@ export const options: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // console.log("==", { account, user });
       if (account?.provider === "google") {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/oauth/signup`,
@@ -111,9 +109,7 @@ export const options: NextAuthOptions = {
       }
     },
     async jwt(props) {
-      console.log("==jwt", { props });
       const { token, user, account, profile } = props;
-      console.log("==", { account });
       if (user || account?.provider === "google") return { ...token, ...user };
 
       if (account) {
@@ -125,8 +121,6 @@ export const options: NextAuthOptions = {
       // return await refreshToken(token);
     },
     async session({ token, session, user }) {
-      console.log("==sdfsdfs", { token, session, user });
-
       session.user = token.user;
       session.backendTokens = token.backendTokens;
 

@@ -1,9 +1,8 @@
 "use client";
 
-import React, { FC, useState } from "react";
-import { Input } from "./ui/input";
-import SocialButton from "./social-button";
+import { FC, useState } from "react";
 import { BsSearch } from "react-icons/bs";
+import { Input } from "./ui/input";
 
 interface Props {
   iconShow?: boolean;

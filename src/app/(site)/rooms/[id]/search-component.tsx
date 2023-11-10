@@ -5,27 +5,36 @@ import { SearchBar } from "@/components/searchBar";
 import SearchResultComponent from "./search-result-component";
 import { Input } from "@/components/ui/input";
 import { debounce } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "@/app/libs/axios-config";
 
 interface Props {
-  chooseSong: (song: any) => void;
-  setSearch: any;
-  search: string;
-  setSearchResults: any;
-  searchResults: any;
+  jwt: string;
+  id: string;
 }
 
-const SearchComponent: FC<Props> = ({
-  chooseSong,
-  setSearch,
-  search,
-  setSearchResults,
-  searchResults,
-}) => {
-  // useEffect(() => {
-  //   if (!search) {
-  //     return setSearchResults([]);
-  //   }
-  // }, [search]);
+const SearchComponent: FC<Props> = ({ jwt, id }) => {
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: chooseSong } = useMutation({
+    mutationFn: async (song: any) => {
+      axios.put(`/room/update/${id}`, {
+        videoId: song.videoId,
+        currentSong: song?.title,
+      });
+    },
+    onSuccess: () => {
+      setSearchResults([]);
+      queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
   const debouncedF = useCallback(
     debounce((value) => {
@@ -44,8 +53,8 @@ const SearchComponent: FC<Props> = ({
       <Input
         value={search}
         onChange={(e) => {
+          setSearch(e.target.value);
           if (!!e.target.value) {
-            setSearch(e.target.value);
             debouncedF(e.target.value);
           }
         }}
