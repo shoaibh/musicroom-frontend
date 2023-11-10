@@ -36,7 +36,20 @@
     color: black;
   }
 
+ .rhap_main.rhap_stacked {
+  position: relative;
+ }
+
   .rhap_volume-controls{
+    position: absolute;
+    right: 0;
+  }
+
+  .rhap_controls-section {
+    margin-top: 20px !important;
+  }
+
+  .rhap_volume-bar-area {
     display: none;
   }
 
