@@ -8,6 +8,7 @@ import { debounce } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "@/app/libs/axios-config";
+import { useSocket } from "@/Context/SocketProvider";
 
 interface Props {
   jwt: string;
@@ -20,14 +21,39 @@ const SearchComponent: FC<Props> = ({ jwt, id }) => {
 
   const queryClient = useQueryClient();
 
+  const { socket, isConnected } = useSocket();
+
+  // useEffect(() => {
+  //   if (isConnected) return;
+
+  //   if (!socket) return;
+
+  //   socket.once("load-room", (id: string) => {
+  //     console.log(id);
+  //   });
+
+  //   socket.emit("get-room", id);
+  // }, [socket, id, isConnected]);
+
+  // useEffect(() => {
+  //   if (isConnected) return;
+  //   if (socket == null) return;
+  //   socket.on("receive-change-song", (song: any) => {
+  //     console.log("==recieve", song);
+  //     // queryClient.setQueryData(["room_video_id", jwt, id], song);
+  //   });
+  // }, [socket, jwt, id, queryClient, isConnected]);
+
   const { mutate: chooseSong } = useMutation({
     mutationFn: async (song: any) => {
-      axios.put(`/room/update/${id}`, {
+      const response = await axios.put(`/room/update/${id}`, {
         videoId: song.videoId,
         currentSong: song?.title,
       });
+      return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (song) => {
+      socket.emit("change-song", song);
       setSearchResults([]);
       queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
     },

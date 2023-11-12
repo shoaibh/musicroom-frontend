@@ -26,7 +26,10 @@ const MessageBox: React.FC<{
       : "bg-gray-100  rounded-bl-none"
   );
 
-  const time = clsx("text-[10px]", isOwn ? "text-slate-200" : "text-slate-500");
+  const time = clsx(
+    "text-[10px] flex",
+    isOwn ? "text-slate-200 justify-end" : "text-slate-500 justify-start"
+  );
 
   return (
     <div className={container}>

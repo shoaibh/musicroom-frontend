@@ -17,19 +17,20 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { BsPlus } from "react-icons/bs";
 import axios from "@/app/libs/axios-config";
+import { useSocket } from "@/Context/SocketProvider";
 
 export const CreateRoom = ({ jwt }: { jwt: string }) => {
   const [name, setName] = useState("Music Night");
 
   const [open, setOpen] = useState(false);
 
-  const queryClient = useQueryClient();
+  const { socket, isConnected } = useSocket();
 
   const { mutate: onCreateRoom, isPending } = useMutation({
     mutationFn: async () => axios.post("/room/create", { name }),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all_rooms", jwt] });
+      socket.emit("refresh-rooms");
       toast.success("Room Created Successfully");
       setName("");
       setOpen(false);

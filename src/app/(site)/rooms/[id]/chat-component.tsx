@@ -41,35 +41,45 @@ export const ChatComponent: FC<{
   useEffect(() => {
     if (!isConnected) return;
 
+    if (!socket) return;
+
+    socket.emit("get-room", roomId);
+
+    return () => {
+      socket.off("get-room");
+    };
+  }, [socket, roomId, isConnected]);
+
+  useEffect(() => {
     // Load chat messages from Redis when the component mounts
     fetch(`http://localhost:5001/chat-messages/${roomId}`)
       .then((response) => response.json())
       .then((data) => {
         setMessages(data);
       });
-
+    if (!isConnected) return;
     // Listen for new messages from WebSocket
     socket.on("receive-message", (data: any) => {
-      console.log("==receive", { data });
       setMessages((messages) => [...messages, data]);
     });
 
     return () => {
-      socket.disconnect();
       socket.off("receive-message");
     };
   }, [roomId, isConnected, socket]);
 
   const sendMessage = useCallback(() => {
-    console.log("checking");
-    socket.emit("send-message", {
+    const payload = {
       sender: { ...user },
       message,
       roomId,
       createdAt: Date.now(),
-    });
+    };
+    console.log("==send");
+    socket.emit("send-message", payload);
+    setMessages((messages) => [...messages, payload]);
     setMessage("");
-  }, [user, message, roomId, socket]);
+  }, [user, message, roomId, socket, setMessages]);
 
   return (
     <div className="max-h-[70vh] h-full overflow-scroll ">
