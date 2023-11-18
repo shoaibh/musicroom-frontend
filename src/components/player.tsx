@@ -74,6 +74,27 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
         }
       );
 
+      socket.on("check-current-timestamp", (data: any) => {
+        console.log({ data });
+        const currentTimeStamp = audio.currentTime;
+        socket.emit("send-current-timestamp", {
+          currentTimeStamp,
+          memberSocketId: data.memberSocketId,
+          timeStamp: Date.now(),
+        });
+      });
+
+      socket.on("receive-current-timestamp", (data: any) => {
+        clientIdRef.current = data.clientId;
+
+        const localTimestamp = Date.now();
+        const networkLatency = (localTimestamp - data.timeStamp) / 2;
+        const correctedSeekTime = data.currentTimeStamp + networkLatency / 1000;
+        console.log("==", { data, correctedSeekTime, networkLatency });
+
+        audio.currentTime = correctedSeekTime;
+      });
+
       // audio.onloadedmetadata = () => {
       //     setDuration(Math.round(audio.duration));
       // };
@@ -83,8 +104,14 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
       socket.off("song-paused");
       socket.off("song-played");
       socket.off("song-seeked");
+      socket.off("check-current-timestamp");
+      socket.off("receive-current-timestamp");
     };
   }, [videoId, isOwner, isConnected, socket]);
+
+  useEffect(() => {
+    socket.emit("get-current-timestamp", { roomId });
+  }, []);
 
   const [isLoading, setIsLoading] = useState(false);
 
