@@ -39,18 +39,6 @@ export const ChatComponent: FC<{
   const { socket, isConnected } = useSocket();
 
   useEffect(() => {
-    if (!isConnected) return;
-
-    if (!socket) return;
-
-    socket.emit("get-room", roomId);
-
-    return () => {
-      socket.off("get-room");
-    };
-  }, [socket, roomId, isConnected]);
-
-  useEffect(() => {
     // Load chat messages from Redis when the component mounts
     fetch(`http://localhost:5001/chat-messages/${roomId}`)
       .then((response) => response.json())
@@ -77,7 +65,6 @@ export const ChatComponent: FC<{
     };
     console.log("==send");
     socket.emit("send-message", payload);
-    setMessages((messages) => [...messages, payload]);
     setMessage("");
   }, [user, message, roomId, socket, setMessages]);
 

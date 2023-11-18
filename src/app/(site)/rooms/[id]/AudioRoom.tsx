@@ -30,7 +30,11 @@ export default function AudioRoom({
     <>
       {video?.data?.data && (
         <div className="w-full">
-          <Player videoId={video?.data?.data?.videoId} isOwner={isOwner} />
+          <Player
+            videoId={video?.data?.data?.videoId}
+            isOwner={isOwner}
+            roomId={id}
+          />
           <SongDetails info={data?.data?.data} />
         </div>
       )}

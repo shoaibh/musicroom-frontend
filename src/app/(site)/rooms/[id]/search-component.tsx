@@ -13,9 +13,10 @@ import { useSocket } from "@/Context/SocketProvider";
 interface Props {
   jwt: string;
   id: string;
+  isOwner: boolean;
 }
 
-const SearchComponent: FC<Props> = ({ jwt, id }) => {
+const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -23,26 +24,17 @@ const SearchComponent: FC<Props> = ({ jwt, id }) => {
 
   const { socket, isConnected } = useSocket();
 
-  // useEffect(() => {
-  //   if (isConnected) return;
-
-  //   if (!socket) return;
-
-  //   socket.once("load-room", (id: string) => {
-  //     console.log(id);
-  //   });
-
-  //   socket.emit("get-room", id);
-  // }, [socket, id, isConnected]);
-
-  // useEffect(() => {
-  //   if (isConnected) return;
-  //   if (socket == null) return;
-  //   socket.on("receive-change-song", (song: any) => {
-  //     console.log("==recieve", song);
-  //     // queryClient.setQueryData(["room_video_id", jwt, id], song);
-  //   });
-  // }, [socket, jwt, id, queryClient, isConnected]);
+  useEffect(() => {
+    if (!isConnected) return;
+    if (socket == null) return;
+    socket.on("receive-change-song", (song: any) => {
+      console.log("recieve");
+      queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
+    });
+    return () => {
+      socket.off("receive-change-song");
+    };
+  }, [socket, jwt, id, queryClient, isConnected]);
 
   const { mutate: chooseSong } = useMutation({
     mutationFn: async (song: any) => {
@@ -53,9 +45,9 @@ const SearchComponent: FC<Props> = ({ jwt, id }) => {
       return response.data;
     },
     onSuccess: (song) => {
-      socket.emit("change-song", song);
+      socket.emit("change-song", { song: song?.data, roomId: id });
       setSearchResults([]);
-      queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
+      // queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
     },
     onError: () => {
       toast.error("Something went wrong");
@@ -74,6 +66,8 @@ const SearchComponent: FC<Props> = ({ jwt, id }) => {
     }, 300),
     []
   );
+
+  if (!isOwner) return null;
   return (
     <>
       <Input
