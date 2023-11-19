@@ -26,7 +26,9 @@ export default async function PlayerRoom({
 
   return (
     <div className="h-[100vh] flex flex-col justify-between">
-      <WholePage session={session} id={params.id} isOwner={isOwner} />
+      {session?.user && (
+        <WholePage session={session} id={params.id} isOwner={isOwner} />
+      )}
     </div>
   );
 }

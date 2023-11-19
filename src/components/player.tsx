@@ -10,9 +10,15 @@ interface Props {
   videoId?: string;
   isOwner?: boolean;
   roomId?: string;
+  user: {
+    id: Number;
+    name: string;
+    email: string;
+    image: string;
+  };
 }
 
-const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
+const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
   const audioRef = useRef(null);
   const [audioSrc, setAudioSrc] = useState("");
   const clientIdRef = useRef<string | null>(null);
@@ -50,49 +56,55 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
       if (!isConnected) return;
 
       socket.on("song-paused", (data: any) => {
-        clientIdRef.current = data;
         audio.pause();
       });
 
       socket.on("song-played", (data: any) => {
-        clientIdRef.current = data;
         audio.play();
       });
 
       socket.on(
         "song-seeked",
-        (data: { clientId: string; seekTime: number; timestamp: number }) => {
-          clientIdRef.current = data.clientId;
-
+        (data: {
+          clientId: string;
+          seekTime: number;
+          timestamp: number;
+          isPlaying: boolean;
+        }) => {
           const localTimestamp = Date.now();
           const networkLatency = (localTimestamp - data.timestamp) / 2;
           const correctedSeekTime = data.seekTime + networkLatency / 1000; // Convert milliseconds to seconds
-          console.log("seeked", { correctedSeekTime });
 
           // Update state or perform other actions with the corrected seek time
           audio.currentTime = correctedSeekTime;
+          if (data.isPlaying) {
+            audio.play();
+          } else {
+            audio.pause();
+          }
         }
       );
 
       socket.on("check-current-timestamp", (data: any) => {
-        console.log({ data });
         const currentTimeStamp = audio.currentTime;
+        const isPlaying = !audio.paused;
         socket.emit("send-current-timestamp", {
           currentTimeStamp,
-          memberSocketId: data.memberSocketId,
+          userId: data.userId,
           timeStamp: Date.now(),
+          isPlaying,
         });
       });
 
       socket.on("receive-current-timestamp", (data: any) => {
-        clientIdRef.current = data.clientId;
-
         const localTimestamp = Date.now();
         const networkLatency = (localTimestamp - data.timeStamp) / 2;
         const correctedSeekTime = data.currentTimeStamp + networkLatency / 1000;
-        console.log("==", { data, correctedSeekTime, networkLatency });
 
         audio.currentTime = correctedSeekTime;
+        if (data.isPlaying) {
+          audio.play();
+        }
       });
 
       // audio.onloadedmetadata = () => {
@@ -110,7 +122,7 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
   }, [videoId, isOwner, isConnected, socket]);
 
   useEffect(() => {
-    socket.emit("get-current-timestamp", { roomId });
+    socket.emit("get-current-timestamp", { roomId, userId: user.id });
   }, []);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -144,34 +156,21 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
   }, [isLoading]);
 
   const onPause = useCallback(() => {
-    if (!isConnected) return;
-
-    if (clientIdRef && clientIdRef.current && clientIdRef.current !== socket.id)
-      return;
+    if (!isConnected || !isOwner) return;
 
     socket.emit("pause-song", { roomId, clientId: socket.id });
-  }, [socket, isConnected, roomId, clientIdRef]);
+  }, [socket, isConnected, roomId]);
 
   const onPlay = useCallback(() => {
-    if (!isConnected) return;
-
-    if (clientIdRef && clientIdRef.current && clientIdRef.current !== socket.id)
-      return;
+    if (!isConnected || !isOwner) return;
 
     socket.emit("play-song", { roomId, clientId: socket.id });
-  }, [socket, isConnected, roomId, clientIdRef]);
+  }, [socket, isConnected, roomId]);
 
   const onSeek = useCallback(
     (event: any) => {
       setIsLoading(false);
-      if (!isConnected) return;
-
-      if (
-        clientIdRef &&
-        clientIdRef.current &&
-        clientIdRef.current !== socket.id
-      )
-        return;
+      if (!isConnected || !isOwner) return;
 
       const newSeekTime = parseFloat(event?.target?.currentTime);
       const localTimestamp = Date.now();
@@ -182,9 +181,10 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId }) => {
         seekTime: newSeekTime,
         clientId: socket.id,
         timestamp: localTimestamp,
+        isPlaying: !event?.target?.paused,
       });
     },
-    [socket, isConnected, roomId, clientIdRef, audioRef]
+    [socket, isConnected, roomId]
   );
 
   return (

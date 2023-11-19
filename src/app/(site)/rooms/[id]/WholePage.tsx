@@ -19,7 +19,7 @@ export const WholePage: FC<{
 
     if (!socket) return;
 
-    socket.emit("join-room", id);
+    socket.emit("join-room", { roomId: id, userId: session?.user?.id });
 
     return () => {
       socket.off("join-room");
@@ -39,7 +39,12 @@ export const WholePage: FC<{
       </div>
       {session?.user && id && <ChatComponent user={session.user} roomId={id} />}
       {session?.backendTokens?.jwt && (
-        <AudioRoom jwt={session.backendTokens.jwt} id={id} isOwner={isOwner} />
+        <AudioRoom
+          jwt={session.backendTokens.jwt}
+          id={id}
+          isOwner={isOwner}
+          user={session?.user}
+        />
       )}
     </>
   );

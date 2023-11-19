@@ -9,10 +9,17 @@ export default function AudioRoom({
   id,
   jwt,
   isOwner,
+  user,
 }: {
   id: string;
   jwt: string;
   isOwner: boolean;
+  user: {
+    id: Number;
+    name: string;
+    email: string;
+    image: string;
+  };
 }) {
   const { data: video } = useQuery({
     queryKey: ["room_video_id", jwt, id],
@@ -30,11 +37,14 @@ export default function AudioRoom({
     <>
       {video?.data?.data && (
         <div className="w-full">
-          <Player
-            videoId={video?.data?.data?.videoId}
-            isOwner={isOwner}
-            roomId={id}
-          />
+          {user && (
+            <Player
+              videoId={video?.data?.data?.videoId}
+              isOwner={isOwner}
+              roomId={id}
+              user={user}
+            />
+          )}
           <SongDetails info={data?.data?.data} />
         </div>
       )}
