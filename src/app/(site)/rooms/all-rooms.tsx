@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { Room } from "./room";
 import axios from "@/app/libs/axios-config";
 import { useSocket } from "@/Context/SocketProvider";
+import { IRoom } from "@/app/Constant";
 
 export const AllRooms = ({ jwt }: { jwt: string }) => {
   const queryClient = useQueryClient();
@@ -31,13 +32,13 @@ export const AllRooms = ({ jwt }: { jwt: string }) => {
 
   return (
     <>
-      <div>AllRooms</div>
-      {data?.data?.data?.map((r: Room) => (
+      {data?.data?.data?.map((r: IRoom) => (
         <Room
           name={r.name}
           id={r.id}
           key={r.id}
           currentSong={r.currentSong || undefined}
+          owner={r.owner}
         />
       ))}
     </>

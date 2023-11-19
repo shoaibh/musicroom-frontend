@@ -1,6 +1,16 @@
-interface Room {
+export interface IRoom {
   id: number;
   name: string;
-  videoId: string;
-  currentSong: string;
+  currentSong?: string;
+  owner?: Owner;
+  roomPic?: string;
+  memberCount?: number;
+}
+
+export interface Owner {
+  id: number;
+  name: string;
+  email: string;
+  image: string;
+  roomIds: string[];
 }

@@ -18,23 +18,21 @@ interface Props {
 
 export const User: FC<Props> = ({ user }) => {
   return (
-    <div>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Image
-            src={user.image || "user_default.svg"}
-            width={40}
-            height={40}
-            alt="user"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Image
+          src={user.image || "user_default.svg"}
+          width={40}
+          height={40}
+          alt="user"
+        />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

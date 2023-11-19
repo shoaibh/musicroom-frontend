@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { User } from "./header/user";
 import { AllRooms } from "./rooms/all-rooms";
 import { CreateRoom } from "./rooms/create-room";
+import { Logo } from "@/components/logo";
 
 export default async function Home() {
   const session = await getServerSession(options);
@@ -11,9 +12,10 @@ export default async function Home() {
     <main className=" min-h-screen  p-7">
       {session && session.user?.name && (
         <>
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full items-center">
             <SearchBar />
             {/* <Notification /> */}
+            <Logo />
             <User user={session.user} />
           </div>
 

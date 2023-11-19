@@ -10,19 +10,11 @@ import {
 import Image from "next/image";
 import React, { FC } from "react";
 import Link from "next/link";
+import { IRoom } from "@/app/Constant";
 
-interface Props {
-  id?: number;
-  owner?: string;
-  name?: string;
-  roomPic?: string;
-  memberCount?: number;
-  currentSong?: string;
-}
-
-export const Room: FC<Props> = ({
+export const Room: FC<IRoom> = ({
   id = 1,
-  owner = "Shoaib",
+  owner = { name: "Shoaib" },
   name = "AR Rahman's collection",
   roomPic = "/music-room.png",
   memberCount = 25,
@@ -32,7 +24,7 @@ export const Room: FC<Props> = ({
     <Link href={`/rooms/${id}`}>
       <Card className="w-11/12 mx-auto mt-5">
         <CardHeader className="flex-row items-center justify-between pt-[10px] pb-0">
-          <CardTitle className="opacity-50">{owner}</CardTitle>
+          <CardTitle className="opacity-50">{owner.name}</CardTitle>
           <Image src={roomPic} width={40} height={40} alt="room pic" />
         </CardHeader>
         <CardContent className="text-lg">{name}</CardContent>

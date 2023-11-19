@@ -175,7 +175,7 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
       const newSeekTime = parseFloat(event?.target?.currentTime);
       const localTimestamp = Date.now();
 
-      // Emit the "seek-song" event with the seek time and timestamp
+      // Emit the "seek-song" event with the seek time and timestamp for covering up the network latency
       socket.emit("seek-song", {
         roomId,
         seekTime: newSeekTime,
