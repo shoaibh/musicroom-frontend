@@ -26,7 +26,6 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
 
   useEffect(() => {
     if (!isConnected) return;
-    if (socket == null) return;
     socket.on("receive-change-song", (song: any) => {
       console.log("recieve");
       queryClient.invalidateQueries({ queryKey: ["room_video_id", jwt, id] });
@@ -63,13 +62,13 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
         .then((result) => {
           setSearchResults(result.data);
         });
-    }, 300),
+    }, 700),
     []
   );
 
   if (!isOwner) return null;
   return (
-    <>
+    <div className="flex justify-center w-full pt-5 flex-col pb-[15px]">
       <Input
         value={search}
         onChange={(e) => {
@@ -98,7 +97,7 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

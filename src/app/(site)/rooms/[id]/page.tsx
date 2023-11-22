@@ -1,6 +1,10 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { WholePage } from "./WholePage";
+import { Header } from "@/components/header";
+import { Logo } from "@/components/logo";
+import { User } from "../../header/user";
+import { BackButton } from "@/components/backButton";
 
 export default async function PlayerRoom({
   params,
@@ -27,7 +31,19 @@ export default async function PlayerRoom({
   return (
     <div className="h-[100vh] flex flex-col justify-between">
       {session?.user && (
-        <WholePage session={session} id={params.id} isOwner={isOwner} />
+        <>
+          <div className="px-7 pt-7 pb-0">
+            <div className="flex justify-between w-full items-center pl-[20px] pr-[20px] ">
+              {/* <SearchBar /> */}
+              {/* <Notification /> */}
+              <BackButton />
+              <Logo />
+              <User user={session.user} />
+            </div>
+          </div>
+
+          <WholePage session={session} id={params.id} isOwner={isOwner} />
+        </>
       )}
     </div>
   );

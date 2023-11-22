@@ -10,7 +10,7 @@
   }
 
   .rhap_progress-bar-show-download{
-    background-color: black;
+    background-color: gray;
     height: 2px;
     
   }
@@ -19,13 +19,13 @@
     width: 10px;
     height: 10px;
     top: -4px;
-    background-color: black;
+    background-color: gray;
   }
   .rhap_progress-filled{
-    background-color: black;
+    background-color: gray;
   }
   .rhap_download-progress{
-    background-color: black;
+    background-color: gray;
   }
 
   .rhap_time{

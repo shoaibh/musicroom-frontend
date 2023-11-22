@@ -7,7 +7,7 @@ interface Props {
 
 export const SongDetails: FC<Props> = ({ info }) => {
   return (
-    <div className="flex p-[20px] ">
+    <div className="flex pl-[25px] pt-[20px]">
       <Image
         src={info?.image || "/default-song.png"}
         width={54}

@@ -13,4 +13,5 @@ export interface Owner {
   email: string;
   image: string;
   roomIds: string[];
+  roomOwned: boolean;
 }

@@ -36,7 +36,7 @@ export default function AudioRoom({
   return (
     <>
       {video?.data?.data && (
-        <div className="w-full">
+        <div className="w-full pt-4 pb-[20px]">
           {user && (
             <Player
               videoId={video?.data?.data?.videoId}
@@ -45,7 +45,7 @@ export default function AudioRoom({
               user={user}
             />
           )}
-          <SongDetails info={data?.data?.data} />
+          {data?.data?.data && <SongDetails info={data?.data?.data} />}
         </div>
       )}
     </>

@@ -63,7 +63,6 @@ export const ChatComponent: FC<{
       roomId,
       createdAt: Date.now(),
     };
-    console.log("==send");
     socket.emit("send-message", payload);
     setMessage("");
   }, [user, message, roomId, socket, setMessages]);
@@ -71,7 +70,7 @@ export const ChatComponent: FC<{
   return (
     <div className="max-h-[70vh] h-full overflow-scroll ">
       <div className="h-full flex flex-col">
-        <div className="flex-1 overflow-y-auto bg-white p-4">
+        <div className="flex-1 overflow-y-auto bg-white p-4 shadow-inner">
           {messages.map((msg, index) => {
             const lastMessage = messages.length - 1 === index;
             return (
@@ -106,6 +105,7 @@ export const ChatComponent: FC<{
                 sendMessage();
               }
             }}
+            placeholder="send a chat"
           />
           <Button onClick={sendMessage}>
             <HiPaperAirplane size={18} className="text-white" />

@@ -5,6 +5,7 @@ import ReactAudioPlayer from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import "./player.css";
 import { useSocket } from "@/Context/SocketProvider";
+import { FaCircleInfo } from "react-icons/fa6";
 
 interface Props {
   videoId?: string;
@@ -21,7 +22,6 @@ interface Props {
 const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
   const audioRef = useRef(null);
   const [audioSrc, setAudioSrc] = useState("");
-  const clientIdRef = useRef<string | null>(null);
   const { socket, isConnected } = useSocket();
 
   useEffect(() => {
@@ -155,6 +155,37 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    const progressBarShow = document.querySelector(
+      '[class="rhap_progress-bar-show-download"]'
+    ) as HTMLButtonElement;
+
+    const progressBarIndicator = document.querySelector(
+      '[class="rhap_progress-indicator"]'
+    ) as HTMLButtonElement;
+
+    const progressBarFilled = document.querySelector(
+      '[class="rhap_progress-filled"]'
+    ) as HTMLButtonElement;
+
+    const progressBarProgress = document.querySelector(
+      '[class="rhap_download-progress"]'
+    ) as HTMLButtonElement;
+
+    if (progressBarShow) {
+      progressBarShow.style.backgroundColor = isOwner ? "black" : "gray";
+    }
+    if (progressBarIndicator) {
+      progressBarIndicator.style.backgroundColor = isOwner ? "black" : "gray";
+    }
+    if (progressBarFilled) {
+      progressBarFilled.style.backgroundColor = isOwner ? "black" : "gray";
+    }
+    if (progressBarProgress) {
+      progressBarProgress.style.backgroundColor = isOwner ? "black" : "gray";
+    }
+  }, [isOwner]);
+
   const onPause = useCallback(() => {
     if (!isConnected || !isOwner) return;
 
@@ -205,6 +236,14 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
         // onPause={() => clearInterval(timerId)}
         // onEnded={onEnded}
       />
+      {!videoId && (
+        <span className="flex items-center pl-0 -ml-[10px] pt-[20px] gap-[10px] justify-center">
+          <FaCircleInfo />
+          {isOwner
+            ? "Search a song to start listening"
+            : "Tell to room owner to play a song"}
+        </span>
+      )}
     </div>
   );
 };

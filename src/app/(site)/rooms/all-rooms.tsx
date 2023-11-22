@@ -7,7 +7,7 @@ import axios from "@/app/libs/axios-config";
 import { useSocket } from "@/Context/SocketProvider";
 import { IRoom } from "@/app/Constant";
 
-export const AllRooms = ({ jwt }: { jwt: string }) => {
+export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({

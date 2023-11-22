@@ -5,6 +5,7 @@ import { User } from "./header/user";
 import { AllRooms } from "./rooms/all-rooms";
 import { CreateRoom } from "./rooms/create-room";
 import { Logo } from "@/components/logo";
+import { Header } from "@/components/header";
 
 export default async function Home() {
   const session = await getServerSession(options);
@@ -12,15 +13,13 @@ export default async function Home() {
     <main className=" min-h-screen  p-7">
       {session && session.user?.name && (
         <>
-          <div className="flex justify-between w-full items-center">
-            <SearchBar />
-            {/* <Notification /> */}
-            <Logo />
-            <User user={session.user} />
-          </div>
+          <Header user={session.user} />
 
           {session?.backendTokens?.jwt && (
-            <AllRooms jwt={session.backendTokens.jwt} />
+            <AllRooms
+              jwt={session.backendTokens.jwt}
+              userId={session.user.id}
+            />
           )}
 
           <div className="fixed bottom-[40px] left-1/2 transform -translate-x-1/2">
