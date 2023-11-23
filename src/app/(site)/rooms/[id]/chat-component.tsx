@@ -40,7 +40,7 @@ export const ChatComponent: FC<{
 
   useEffect(() => {
     // Load chat messages from Redis when the component mounts
-    fetch(`http://localhost:5001/chat-messages/${roomId}`)
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-messages/${roomId}`)
       .then((response) => response.json())
       .then((data) => {
         setMessages(data);
