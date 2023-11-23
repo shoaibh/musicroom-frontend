@@ -6,4 +6,4 @@ export default withAuth({
   },
 });
 
-export const config = { matcher: ["/", "/rooms"] };
+export const config = { matcher: ["/", "/rooms", "/rooms/:path*"] };

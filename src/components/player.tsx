@@ -98,7 +98,7 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
 
       socket.on("receive-current-timestamp", (data: any) => {
         const localTimestamp = Date.now();
-        const networkLatency = (localTimestamp - data.timeStamp) / 2;
+        const networkLatency = localTimestamp - data.timeStamp;
         const correctedSeekTime = data.currentTimeStamp + networkLatency / 1000;
 
         audio.currentTime = correctedSeekTime;

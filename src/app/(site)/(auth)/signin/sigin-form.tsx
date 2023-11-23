@@ -60,7 +60,7 @@ export const SignInForm: FC<Props> = ({ providers }) => {
         if (callback?.error) {
           toast.error("Something went wrong");
         } else {
-          toast.success("Signed Up Successfully");
+          toast.success("Signed In Successfully");
           router.push("/");
         }
       });
@@ -77,12 +77,12 @@ export const SignInForm: FC<Props> = ({ providers }) => {
           <CardTitle className="text-2xl text-center">Sign in</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <SocialButton
+          {/* <SocialButton
             icon={BsGoogle}
             onClick={() =>
               signIn("google", { redirect: true, callbackUrl: "/" })
             }
-          />
+          /> */}
 
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>

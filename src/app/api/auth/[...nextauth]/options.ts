@@ -103,6 +103,8 @@ export const options: NextAuthOptions = {
 
         const oAuthuser = r.data;
 
+        // console.log("==oths", { oAuthuser, credentials, profile });
+
         return oAuthuser;
       } else {
         return true;
@@ -110,6 +112,9 @@ export const options: NextAuthOptions = {
     },
     async jwt(props) {
       const { token, user, account, profile } = props;
+
+      // console.log("==jwt", { token, user, account, profile });
+
       if (user || account?.provider === "google") return { ...token, ...user };
 
       if (account) {
@@ -121,6 +126,8 @@ export const options: NextAuthOptions = {
       // return await refreshToken(token);
     },
     async session({ token, session, user }) {
+      // console.log("==session", { token, session, user });
+
       session.user = token.user;
       session.backendTokens = token.backendTokens;
 

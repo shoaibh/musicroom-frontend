@@ -9,6 +9,7 @@ import { Header } from "@/components/header";
 
 export default async function Home() {
   const session = await getServerSession(options);
+
   return (
     <main className=" min-h-screen  p-7">
       {session && session.user?.name && (

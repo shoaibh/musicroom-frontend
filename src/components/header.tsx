@@ -13,7 +13,8 @@ export const Header: FC<{
 }> = ({ user }) => {
   return (
     <div className="flex justify-between w-full items-center pl-[20px] pr-[20px] ">
-      <SearchBar />
+      {/* <SearchBar /> */}
+      <div />
       {/* <Notification /> */}
       <Logo />
       <User user={user} />

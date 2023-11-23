@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import toast, { Toaster } from "react-hot-toast";
 import TanstackProvider from "@/Context/TanstackProvider";
 import { SocketProvider } from "@/Context/SocketProvider";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Music Room",
@@ -18,6 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <NextTopLoader />
+
         <SocketProvider>
           <TanstackProvider>
             <ToasterContext />
