@@ -1,251 +1,247 @@
-"use client";
+'use client';
 
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import ReactAudioPlayer from "react-h5-audio-player";
-import "react-h5-audio-player/lib/styles.css";
-import "./player.css";
-import { useSocket } from "@/Context/SocketProvider";
-import { FaCircleInfo } from "react-icons/fa6";
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import ReactAudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
+import './player.css';
+import { useSocket } from '@/Context/SocketProvider';
+import { FaCircleInfo } from 'react-icons/fa6';
 
 interface Props {
-  videoId?: string;
-  isOwner?: boolean;
-  roomId?: string;
-  user: {
-    id: Number;
-    name: string;
-    email: string;
-    image: string;
-  };
+    videoId?: string;
+    isOwner?: boolean;
+    roomId?: string;
+    user: {
+        id: Number;
+        name: string;
+        email: string;
+        image: string;
+    };
 }
 
 const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
-  const audioRef = useRef(null);
-  const [audioSrc, setAudioSrc] = useState("");
-  const { socket, isConnected } = useSocket();
+    const audioRef = useRef(null);
+    const [audioSrc, setAudioSrc] = useState('');
+    const { socket, isConnected } = useSocket();
 
-  useEffect(() => {
-    if (audioRef?.current && (audioRef.current as HTMLAudioElement)) {
-      const audioElement = audioRef.current as unknown as {
-        audio: { current: HTMLAudioElement };
-        handlePause: () => void;
-      };
-      let audio = audioElement.audio.current as unknown as HTMLAudioElement;
-      audio.preload = "metadata";
+    useEffect(() => {
+        if (audioRef?.current && (audioRef.current as HTMLAudioElement)) {
+            const audioElement = audioRef.current as unknown as {
+                audio: { current: HTMLAudioElement };
+                handlePause: () => void;
+            };
+            const audio = audioElement.audio.current as unknown as HTMLAudioElement;
+            audio.preload = 'metadata';
 
-      if (!isOwner) {
-        const progress = document.querySelector(
-          '[role="progressbar"]'
-        ) as HTMLElement;
-        const controls = document.querySelector(
-          '[class="rhap_main-controls"]'
-        ) as HTMLElement;
-        if (progress) {
-          progress.style.pointerEvents = "none";
+            if (!isOwner) {
+                const progress = document.querySelector('[role="progressbar"]') as HTMLElement;
+                const controls = document.querySelector(
+                    '[class="rhap_main-controls"]'
+                ) as HTMLElement;
+                if (progress) {
+                    progress.style.pointerEvents = 'none';
+                }
+                if (controls) {
+                    controls.style.display = 'none';
+                }
+            }
+
+            if (videoId)
+                setAudioSrc(`${process.env.NEXT_PUBLIC_BACKEND_URL}/song/play?videoId=${videoId}`);
+
+            if (!isConnected) return;
+            if (!socket) return;
+            // eslint-disable-next-line
+            socket.on('song-paused', (data: any) => {
+                audio.pause();
+            });
+            // eslint-disable-next-line
+            socket.on('song-played', (data: any) => {
+                audio.play();
+            });
+
+            socket.on(
+                'song-seeked',
+                (data: {
+                    clientId: string;
+                    seekTime: number;
+                    timestamp: number;
+                    isPlaying: boolean;
+                }) => {
+                    const localTimestamp = Date.now();
+                    const networkLatency = (localTimestamp - data.timestamp) / 2;
+                    const correctedSeekTime = data.seekTime + networkLatency / 1000; // Convert milliseconds to seconds
+
+                    // Update state or perform other actions with the corrected seek time
+                    audio.currentTime = correctedSeekTime;
+                    if (data.isPlaying) {
+                        audio.play();
+                    } else {
+                        audio.pause();
+                    }
+                }
+            );
+            // eslint-disable-next-line
+            socket.on('check-current-timestamp', (data: any) => {
+                const currentTimeStamp = audio.currentTime;
+                const isPlaying = !audio.paused;
+                socket.emit('send-current-timestamp', {
+                    currentTimeStamp,
+                    userId: data.userId,
+                    timeStamp: Date.now(),
+                    isPlaying
+                });
+            });
+
+            // eslint-disable-next-line
+            socket.on('receive-current-timestamp', (data: any) => {
+                const localTimestamp = Date.now();
+                const networkLatency = localTimestamp - data.timeStamp;
+                const correctedSeekTime = data.currentTimeStamp + networkLatency / 1000;
+
+                audio.currentTime = correctedSeekTime;
+                if (data.isPlaying) {
+                    audio.play();
+                }
+            });
+
+            // audio.onloadedmetadata = () => {
+            //     setDuration(Math.round(audio.duration));
+            // };
         }
-        if (controls) {
-          controls.style.display = "none";
+
+        return () => {
+            socket?.off('song-paused');
+            socket?.off('song-played');
+            socket?.off('song-seeked');
+            socket?.off('check-current-timestamp');
+            socket?.off('receive-current-timestamp');
+        };
+    }, [videoId, isOwner, isConnected, socket]);
+
+    useEffect(() => {
+        socket?.emit('get-current-timestamp', { roomId, userId: user.id });
+        // eslint-disable-next-line
+    }, []);
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const playButton = document.querySelector('[aria-label="Play"]') as HTMLButtonElement;
+        const forwardButton = document.querySelector('[aria-label="Forward"]') as HTMLButtonElement;
+        const rewindButton = document.querySelector('[aria-label="Rewind"]') as HTMLButtonElement;
+
+        if (playButton) {
+            playButton.disabled = isLoading;
+            playButton.style.color = isLoading ? 'gray' : 'black';
+            playButton.style.cursor = isLoading ? 'default' : 'pointer';
         }
-      }
-
-      if (videoId)
-        setAudioSrc(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/song/play?videoId=${videoId}`
-        );
-
-      if (!isConnected) return;
-
-      socket.on("song-paused", (data: any) => {
-        audio.pause();
-      });
-
-      socket.on("song-played", (data: any) => {
-        audio.play();
-      });
-
-      socket.on(
-        "song-seeked",
-        (data: {
-          clientId: string;
-          seekTime: number;
-          timestamp: number;
-          isPlaying: boolean;
-        }) => {
-          const localTimestamp = Date.now();
-          const networkLatency = (localTimestamp - data.timestamp) / 2;
-          const correctedSeekTime = data.seekTime + networkLatency / 1000; // Convert milliseconds to seconds
-
-          // Update state or perform other actions with the corrected seek time
-          audio.currentTime = correctedSeekTime;
-          if (data.isPlaying) {
-            audio.play();
-          } else {
-            audio.pause();
-          }
+        if (forwardButton) {
+            forwardButton.disabled = isLoading;
+            forwardButton.style.color = isLoading ? 'gray' : 'black';
+            forwardButton.style.cursor = isLoading ? 'default' : 'pointer';
         }
-      );
-
-      socket.on("check-current-timestamp", (data: any) => {
-        const currentTimeStamp = audio.currentTime;
-        const isPlaying = !audio.paused;
-        socket.emit("send-current-timestamp", {
-          currentTimeStamp,
-          userId: data.userId,
-          timeStamp: Date.now(),
-          isPlaying,
-        });
-      });
-
-      socket.on("receive-current-timestamp", (data: any) => {
-        const localTimestamp = Date.now();
-        const networkLatency = localTimestamp - data.timeStamp;
-        const correctedSeekTime = data.currentTimeStamp + networkLatency / 1000;
-
-        audio.currentTime = correctedSeekTime;
-        if (data.isPlaying) {
-          audio.play();
+        if (rewindButton) {
+            rewindButton.disabled = isLoading;
+            rewindButton.style.color = isLoading ? 'gray' : 'black';
+            rewindButton.style.cursor = isLoading ? 'default' : 'pointer';
         }
-      });
+    }, [isLoading]);
 
-      // audio.onloadedmetadata = () => {
-      //     setDuration(Math.round(audio.duration));
-      // };
-    }
+    useEffect(() => {
+        const progressBarShow = document.querySelector(
+            '[class="rhap_progress-bar-show-download"]'
+        ) as HTMLButtonElement;
 
-    return () => {
-      socket.off("song-paused");
-      socket.off("song-played");
-      socket.off("song-seeked");
-      socket.off("check-current-timestamp");
-      socket.off("receive-current-timestamp");
-    };
-  }, [videoId, isOwner, isConnected, socket]);
+        const progressBarIndicator = document.querySelector(
+            '[class="rhap_progress-indicator"]'
+        ) as HTMLButtonElement;
 
-  useEffect(() => {
-    socket.emit("get-current-timestamp", { roomId, userId: user.id });
-  }, []);
+        const progressBarFilled = document.querySelector(
+            '[class="rhap_progress-filled"]'
+        ) as HTMLButtonElement;
 
-  const [isLoading, setIsLoading] = useState(false);
+        const progressBarProgress = document.querySelector(
+            '[class="rhap_download-progress"]'
+        ) as HTMLButtonElement;
 
-  useEffect(() => {
-    const playButton = document.querySelector(
-      '[aria-label="Play"]'
-    ) as HTMLButtonElement;
-    const forwardButton = document.querySelector(
-      '[aria-label="Forward"]'
-    ) as HTMLButtonElement;
-    const rewindButton = document.querySelector(
-      '[aria-label="Rewind"]'
-    ) as HTMLButtonElement;
+        if (progressBarShow) {
+            progressBarShow.style.backgroundColor = isOwner ? 'black' : 'gray';
+        }
+        if (progressBarIndicator) {
+            progressBarIndicator.style.backgroundColor = isOwner ? 'black' : 'gray';
+        }
+        if (progressBarFilled) {
+            progressBarFilled.style.backgroundColor = isOwner ? 'black' : 'gray';
+        }
+        if (progressBarProgress) {
+            progressBarProgress.style.backgroundColor = isOwner ? 'black' : 'gray';
+        }
+    }, [isOwner]);
 
-    if (playButton) {
-      playButton.disabled = isLoading;
-      playButton.style.color = isLoading ? "gray" : "black";
-      playButton.style.cursor = isLoading ? "default" : "pointer";
-    }
-    if (forwardButton) {
-      forwardButton.disabled = isLoading;
-      forwardButton.style.color = isLoading ? "gray" : "black";
-      forwardButton.style.cursor = isLoading ? "default" : "pointer";
-    }
-    if (rewindButton) {
-      rewindButton.disabled = isLoading;
-      rewindButton.style.color = isLoading ? "gray" : "black";
-      rewindButton.style.cursor = isLoading ? "default" : "pointer";
-    }
-  }, [isLoading]);
+    const onPause = useCallback(() => {
+        if (!isConnected || !isOwner || !socket) return;
 
-  useEffect(() => {
-    const progressBarShow = document.querySelector(
-      '[class="rhap_progress-bar-show-download"]'
-    ) as HTMLButtonElement;
+        socket.emit('pause-song', { roomId, clientId: socket.id });
+        // eslint-disable-next-line
+    }, [socket, isConnected, roomId]);
 
-    const progressBarIndicator = document.querySelector(
-      '[class="rhap_progress-indicator"]'
-    ) as HTMLButtonElement;
+    const onPlay = useCallback(() => {
+        if (!isConnected || !isOwner || !socket) return;
 
-    const progressBarFilled = document.querySelector(
-      '[class="rhap_progress-filled"]'
-    ) as HTMLButtonElement;
+        socket.emit('play-song', { roomId, clientId: socket.id });
+        // eslint-disable-next-line
+    }, [socket, isConnected, roomId]);
 
-    const progressBarProgress = document.querySelector(
-      '[class="rhap_download-progress"]'
-    ) as HTMLButtonElement;
+    const onSeek = useCallback(
+        // eslint-disable-next-line
+        (event: any) => {
+            setIsLoading(false);
+            if (!isConnected || !isOwner) return;
 
-    if (progressBarShow) {
-      progressBarShow.style.backgroundColor = isOwner ? "black" : "gray";
-    }
-    if (progressBarIndicator) {
-      progressBarIndicator.style.backgroundColor = isOwner ? "black" : "gray";
-    }
-    if (progressBarFilled) {
-      progressBarFilled.style.backgroundColor = isOwner ? "black" : "gray";
-    }
-    if (progressBarProgress) {
-      progressBarProgress.style.backgroundColor = isOwner ? "black" : "gray";
-    }
-  }, [isOwner]);
+            const newSeekTime = parseFloat(event?.target?.currentTime);
+            const localTimestamp = Date.now();
 
-  const onPause = useCallback(() => {
-    if (!isConnected || !isOwner) return;
+            // Emit the "seek-song" event with the seek time and timestamp for covering up the network latency
+            socket?.emit('seek-song', {
+                roomId,
+                seekTime: newSeekTime,
+                clientId: socket.id,
+                timestamp: localTimestamp,
+                isPlaying: !event?.target?.paused
+            });
+        },
+        [socket, isConnected, roomId, isOwner]
+    );
 
-    socket.emit("pause-song", { roomId, clientId: socket.id });
-  }, [socket, isConnected, roomId]);
-
-  const onPlay = useCallback(() => {
-    if (!isConnected || !isOwner) return;
-
-    socket.emit("play-song", { roomId, clientId: socket.id });
-  }, [socket, isConnected, roomId]);
-
-  const onSeek = useCallback(
-    (event: any) => {
-      setIsLoading(false);
-      if (!isConnected || !isOwner) return;
-
-      const newSeekTime = parseFloat(event?.target?.currentTime);
-      const localTimestamp = Date.now();
-
-      // Emit the "seek-song" event with the seek time and timestamp for covering up the network latency
-      socket.emit("seek-song", {
-        roomId,
-        seekTime: newSeekTime,
-        clientId: socket.id,
-        timestamp: localTimestamp,
-        isPlaying: !event?.target?.paused,
-      });
-    },
-    [socket, isConnected, roomId]
-  );
-
-  return (
-    <div className="player-component">
-      <ReactAudioPlayer
-        ref={audioRef}
-        src={audioSrc}
-        showJumpControls
-        showFilledProgress
-        showFilledVolume
-        hasDefaultKeyBindings={false}
-        onPause={onPause}
-        onPlay={onPlay}
-        autoPlay={false}
-        autoPlayAfterSrcChange={false}
-        onSeeking={() => setIsLoading(true)}
-        onSeeked={onSeek}
-        // onPause={() => clearInterval(timerId)}
-        // onEnded={onEnded}
-      />
-      {!videoId && (
-        <span className="flex items-center pl-0 -ml-[10px] pt-[20px] gap-[10px] justify-center">
-          <FaCircleInfo />
-          {isOwner
-            ? "Search a song to start listening"
-            : "Tell to room owner to play a song"}
-        </span>
-      )}
-    </div>
-  );
+    return (
+        <div className="player-component">
+            <ReactAudioPlayer
+                ref={audioRef}
+                src={audioSrc}
+                showJumpControls
+                showFilledProgress
+                showFilledVolume
+                hasDefaultKeyBindings={false}
+                onPause={onPause}
+                onPlay={onPlay}
+                autoPlay={false}
+                autoPlayAfterSrcChange={false}
+                onSeeking={() => setIsLoading(true)}
+                onSeeked={onSeek}
+                // onPause={() => clearInterval(timerId)}
+                // onEnded={onEnded}
+            />
+            {!videoId && (
+                <span className="flex items-center pl-0 -ml-[10px] pt-[20px] gap-[10px] justify-center">
+                    <FaCircleInfo />
+                    {isOwner
+                        ? 'Search a song to start listening'
+                        : 'Tell to room owner to play a song'}
+                </span>
+            )}
+        </div>
+    );
 };
 
 export default Player;

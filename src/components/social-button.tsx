@@ -1,16 +1,16 @@
-import { IconType } from "react-icons";
+import { IconType } from 'react-icons';
 
 interface SocialButtonProps {
-  icon: IconType;
-  onClick: () => void;
+    icon: IconType;
+    onClick: () => void;
 }
 
 const SocialButton: React.FC<SocialButtonProps> = ({ icon: Icon, onClick }) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className="
       inline-flex
       w-full 
       justify-center 
@@ -25,11 +25,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({ icon: Icon, onClick }) => {
       ring-gray-300 
       hover:bg-gray-50 
       focus:outline-offset-0
-    "
-    >
-      <Icon />
-    </button>
-  );
+    ">
+            <Icon />
+        </button>
+    );
 };
 
 export default SocialButton;

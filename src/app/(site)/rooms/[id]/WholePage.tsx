@@ -1,50 +1,45 @@
-"use client";
+'use client';
 
-import React, { FC, useEffect } from "react";
-import SearchComponent from "./search-component";
-import { ChatComponent } from "./chat-component";
-import AudioRoom from "./AudioRoom";
-import { Session } from "next-auth";
-import { useSocket } from "@/Context/SocketProvider";
-import { Header } from "@/components/header";
+import { useSocket } from '@/Context/SocketProvider';
+import { Session } from 'next-auth';
+import { FC, useEffect } from 'react';
+import AudioRoom from './AudioRoom';
+import { ChatComponent } from './chat-component';
+import SearchComponent from './search-component';
 
 export const WholePage: FC<{
-  session: Session | null;
-  isOwner: boolean;
-  id: string;
+    session: Session | null;
+    isOwner: boolean;
+    id: string;
 }> = ({ session, isOwner, id }) => {
-  const { socket, isConnected } = useSocket();
+    const { socket, isConnected } = useSocket();
 
-  useEffect(() => {
-    if (!isConnected) return;
+    useEffect(() => {
+        if (!isConnected) return;
 
-    if (!socket) return;
+        if (!socket) return;
 
-    socket.emit("join-room", { roomId: id, userId: session?.user?.id });
+        socket.emit('join-room', { roomId: id, userId: session?.user?.id });
 
-    return () => {
-      socket.off("join-room");
-    };
-  }, [socket, id, isConnected]);
+        return () => {
+            socket.off('join-room');
+        };
+    }, [socket, id, isConnected, session?.user?.id]);
 
-  return (
-    <>
-      {session?.backendTokens?.jwt && (
-        <SearchComponent
-          id={id}
-          jwt={session.backendTokens.jwt}
-          isOwner={isOwner}
-        />
-      )}
-      {session?.user && id && <ChatComponent user={session.user} roomId={id} />}
-      {session?.backendTokens?.jwt && (
-        <AudioRoom
-          jwt={session.backendTokens.jwt}
-          id={id}
-          isOwner={isOwner}
-          user={session?.user}
-        />
-      )}
-    </>
-  );
+    return (
+        <>
+            {session?.backendTokens?.jwt && (
+                <SearchComponent id={id} jwt={session.backendTokens.jwt} isOwner={isOwner} />
+            )}
+            {session?.user && id && <ChatComponent user={session.user} roomId={id} />}
+            {session?.backendTokens?.jwt && (
+                <AudioRoom
+                    jwt={session.backendTokens.jwt}
+                    id={id}
+                    isOwner={isOwner}
+                    user={session?.user}
+                />
+            )}
+        </>
+    );
 };
