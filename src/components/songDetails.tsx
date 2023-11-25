@@ -10,7 +10,7 @@ export const SongDetails: FC<Props> = ({ info }) => {
     return (
         <div className="flex pl-[25px] pt-[20px]">
             <Image
-                src={info?.image || '/default-song.png'}
+                src={info?.thumbnails?.[0].url || '/default-song.png'}
                 width={54}
                 height={54}
                 alt="song"

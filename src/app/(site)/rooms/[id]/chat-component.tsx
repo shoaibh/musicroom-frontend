@@ -44,7 +44,6 @@ export const ChatComponent: FC<{
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-messages/${roomId}`)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
                 if (data) setMessages(data);
             });
         if (!isConnected) return;
