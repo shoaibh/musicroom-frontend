@@ -45,8 +45,7 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
             return response.data;
         },
         onSuccess: (song) => {
-            // socket?.emit('change-song', { song: song?.data, roomId: id });
-            queryClient.invalidateQueries({ queryKey: ['room_video_id', jwt, id] });
+            socket?.emit('change-song', { song: song?.data, roomId: id });
             setSearch('');
         },
         onError: () => {

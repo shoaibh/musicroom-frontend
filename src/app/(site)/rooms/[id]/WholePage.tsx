@@ -3,9 +3,9 @@
 import { useSocket } from '@/Context/SocketProvider';
 import { Session } from 'next-auth';
 import { FC, useEffect } from 'react';
-// import AudioRoom from './AudioRoom';
+import AudioRoom from './AudioRoom';
 import { ChatComponent } from './chat-component';
-// import SearchComponent from './search-component';
+import SearchComponent from './search-component';
 
 export const WholePage: FC<{
     session: Session | null;
@@ -28,18 +28,18 @@ export const WholePage: FC<{
 
     return (
         <>
-            {/* {session?.backendTokens?.jwt && (
+            {session?.backendTokens?.jwt && (
                 <SearchComponent id={id} jwt={session.backendTokens.jwt} isOwner={isOwner} />
-            )} */}
+            )}
             {session?.user && id && <ChatComponent user={session.user} roomId={id} />}
-            {/* {session?.backendTokens?.jwt && (
+            {session?.backendTokens?.jwt && (
                 <AudioRoom
                     jwt={session.backendTokens.jwt}
                     id={id}
                     isOwner={isOwner}
                     user={session?.user}
                 />
-            )} */}
+            )}
         </>
     );
 };

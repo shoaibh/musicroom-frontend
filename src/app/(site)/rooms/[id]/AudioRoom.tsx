@@ -37,9 +37,9 @@ export default function AudioRoom({
         <>
             {video?.data?.data && (
                 <div className="w-full pt-4 pb-[20px]">
-                    {user && (
+                    {user && data?.data?.data && (
                         <Player
-                            videoId={video?.data?.data?.videoId}
+                            audioUrl={data.data.data?.audioUrl}
                             isOwner={isOwner}
                             roomId={id}
                             user={user}

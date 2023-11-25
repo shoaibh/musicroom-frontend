@@ -8,7 +8,7 @@ import { useSocket } from '@/Context/SocketProvider';
 import { FaCircleInfo } from 'react-icons/fa6';
 
 interface Props {
-    videoId?: string;
+    audioUrl?: string;
     isOwner?: boolean;
     roomId?: string;
     user: {
@@ -19,9 +19,8 @@ interface Props {
     };
 }
 
-const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
+const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
     const audioRef = useRef(null);
-    const [audioSrc, setAudioSrc] = useState('');
     const { socket, isConnected } = useSocket();
 
     useEffect(() => {
@@ -45,9 +44,6 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
                     controls.style.display = 'none';
                 }
             }
-
-            if (videoId)
-                setAudioSrc(`${process.env.NEXT_PUBLIC_BACKEND_URL}/song/play?videoId=${videoId}`);
 
             if (!isConnected) return;
             if (!socket) return;
@@ -117,7 +113,7 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
             socket?.off('check-current-timestamp');
             socket?.off('receive-current-timestamp');
         };
-    }, [videoId, isOwner, isConnected, socket]);
+    }, [isOwner, isConnected, socket]);
 
     useEffect(() => {
         socket?.emit('get-current-timestamp', { roomId, userId: user.id });
@@ -216,23 +212,29 @@ const Player: FC<Props> = ({ videoId, isOwner, roomId, user }) => {
 
     return (
         <div className="player-component">
-            <ReactAudioPlayer
-                ref={audioRef}
-                src={audioSrc}
-                showJumpControls
-                showFilledProgress
-                showFilledVolume
-                hasDefaultKeyBindings={false}
-                onPause={onPause}
-                onPlay={onPlay}
-                autoPlay={false}
-                autoPlayAfterSrcChange={false}
-                onSeeking={() => setIsLoading(true)}
-                onSeeked={onSeek}
-                // onPause={() => clearInterval(timerId)}
-                // onEnded={onEnded}
-            />
-            {!videoId && (
+            {audioUrl && (
+                <ReactAudioPlayer
+                    ref={audioRef}
+                    src={audioUrl}
+                    // showJumpControls
+                    // showFilledProgress
+                    // showFilledVolume
+                    // hasDefaultKeyBindings={false}
+                    onPause={onPause}
+                    onPlay={onPlay}
+                    // autoPlay={false}
+                    // autoPlayAfterSrcChange={false}
+                    // onSeeking={() => setIsLoading(true)}
+                    onSeeked={onSeek}
+                    // onPause={() => clearInterval(timerId)}
+                    // onEnded={onEnded}
+                />
+                // <audio controls>
+                //     <source src={audioUrl} type="audio/ogg" />
+                //     Your browser does not support the audio element.
+                // </audio>
+            )}
+            {!audioUrl && (
                 <span className="flex items-center pl-0 -ml-[10px] pt-[20px] gap-[10px] justify-center">
                     <FaCircleInfo />
                     {isOwner
