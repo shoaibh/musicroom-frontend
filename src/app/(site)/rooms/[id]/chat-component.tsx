@@ -41,11 +41,12 @@ export const ChatComponent: FC<{
 
     useEffect(() => {
         // Load chat messages from Redis when the component mounts
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-messages/${roomId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                setMessages(data);
-            });
+        // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-messages/${roomId}`)
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         console.log(data);
+        //         if (data) setMessages(data);
+        //     });
         if (!isConnected) return;
         if (!socket) return;
         // Listen for new messages from WebSocket
@@ -76,7 +77,7 @@ export const ChatComponent: FC<{
         <div className="max-h-[70vh] h-full overflow-scroll ">
             <div className="h-full flex flex-col">
                 <div className="flex-1 overflow-y-auto bg-white p-4 shadow-inner">
-                    {messages.map((msg, index) => {
+                    {messages?.map((msg, index) => {
                         const lastMessage = messages.length - 1 === index;
                         return (
                             <div key={index} ref={lastMessage ? lastMessageRef : null}>
