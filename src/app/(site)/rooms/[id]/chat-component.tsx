@@ -73,7 +73,7 @@ export const ChatComponent: FC<{
     }, [user, message, roomId, socket]);
 
     return (
-        <div className="max-h-[70vh] h-full overflow-scroll ">
+        <div className=" h-full overflow-scroll ">
             <div className="h-full flex flex-col">
                 <div className="flex-1 overflow-y-auto bg-white p-4 shadow-inner">
                     {messages?.map((msg, index) => {

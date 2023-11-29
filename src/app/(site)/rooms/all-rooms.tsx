@@ -6,6 +6,8 @@ import { Room } from './room';
 import axios from '@/app/libs/axios-config';
 import { useSocket } from '@/Context/SocketProvider';
 import { IRoom } from '@/app/Constant';
+import { MyRooms } from './my-rooms';
+import { RecommendedRooms } from './recommended-rooms';
 
 export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
     const queryClient = useQueryClient();
@@ -32,16 +34,12 @@ export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
     }, [isConnected, socket, jwt, queryClient]);
 
     return (
-        <>
-            {data?.data?.data?.map((r: IRoom) => (
-                <Room
-                    name={r.name}
-                    id={r.id}
-                    key={r.id}
-                    currentSong={r.currentSong || undefined}
-                    owner={r.owner}
-                />
-            ))}
-        </>
+        <div className="md:flex md:justify--around mt-7">
+            <MyRooms rooms={data?.data?.data || []} />
+
+            <div className="border-l border-slate-200 border-dashed h-[80vh] mt-[5px] hidden md:block" />
+
+            <RecommendedRooms rooms={data?.data?.data || []} />
+        </div>
     );
 };

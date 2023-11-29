@@ -10,7 +10,7 @@ export const BackButton = () => {
     return (
         <IoArrowBack
             size={28}
-            className="cursor-pointer"
+            className="cursor-pointer text-black"
             onClick={() => router.push('/', { scroll: false })}
         />
     );

@@ -71,11 +71,14 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
         debounce((value) => {
             if (value.length > 2) {
                 setDebouncedValue(value);
+                setShowResults(true);
             }
         }, 700),
         // eslint-disable-next-line
         []
     );
+
+    const [showResults, setShowResults] = useState(false);
 
     if (!isOwner) return null;
     return (
@@ -94,14 +97,15 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
                 required
                 placeholder="search song"
                 className="bg-white box-border my-0 mx-[15px] w-[calc(100% - 30px)]"
+                onBlur={() => setShowResults(false)}
             />
-            {search?.length > 2 && (
+            {showResults && search?.length > 2 && (
                 <div className="absolute top-[57px] w-[92%] z-10 m-[20px] mt-0 bg-white shadow-md">
-                    <div className="p-[10px]  m-auto text-center">
+                    <div className="p-[10px]  m-auto flex flex-col justify-center text-center">
                         {isLoading && (
                             <LiaSpinnerSolid
-                                size={30}
-                                className="mr-2 h-4 w-4 animate-spin text-center"
+                                size={50}
+                                className="h-7 w-7 animate-spin text-center text-black m-auto"
                             />
                         )}
                         {// eslint-disable-next-line

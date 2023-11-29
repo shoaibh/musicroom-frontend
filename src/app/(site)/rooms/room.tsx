@@ -15,8 +15,8 @@ export const Room: FC<IRoom> = ({
     currentSong = 'no song selected'
 }) => {
     return (
-        <Link href={`/rooms/${id}`}>
-            <Card className="w-11/12 mx-auto mt-5 relative">
+        <Card className="w-11/12 mx-auto mt-5 relative">
+            <Link href={`/rooms/${id}`}>
                 <CardHeader className="flex-row items-center justify-between pt-[10px] pb-0">
                     <CardTitle className="opacity-50">{owner?.name || 'shoaib'}</CardTitle>
                     <Image src={roomPic} width={40} height={40} alt="room pic" />
@@ -39,7 +39,7 @@ export const Room: FC<IRoom> = ({
                         owned
                     </div>
                 )}
-            </Card>
-        </Link>
+            </Link>
+        </Card>
     );
 };

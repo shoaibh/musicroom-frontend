@@ -21,7 +21,7 @@ const MessageBox: React.FC<{
     const body = clsx('flex flex-col gap-2', isOwn && 'items-end');
     const message = clsx(
         'text-sm w-fit overflow-hidden pt-[5px] pb-[5px] pl-[10px] pr-[10px] rounded-md',
-        isOwn ? 'bg-sky-500 text-white  rounded-br-none' : 'bg-gray-100  rounded-bl-none'
+        isOwn ? 'bg-sky-500 text-white  rounded-br-none' : 'bg-gray-100 text-black rounded-bl-none'
     );
 
     const time = clsx(

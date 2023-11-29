@@ -49,11 +49,11 @@ export const CreateRoom = ({ jwt }: { jwt: string }) => {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Create New Room</DialogTitle>
+                        <DialogTitle className="text-black">Create New Room</DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
+                            <Label htmlFor="name" className="text-right text-black">
                                 Name
                             </Label>
                             <Input

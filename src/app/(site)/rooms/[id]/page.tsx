@@ -22,21 +22,7 @@ export default async function PlayerRoom({ params }: { params: { id: string } })
 
     return (
         <div className="h-[100vh] flex flex-col justify-between">
-            {session?.user && (
-                <>
-                    <div className="px-7 pt-7 pb-0">
-                        <div className="flex justify-between w-full items-center pl-[20px] pr-[20px] ">
-                            {/* <SearchBar /> */}
-                            {/* <Notification /> */}
-                            <BackButton />
-                            <Logo />
-                            <User user={session.user} />
-                        </div>
-                    </div>
-
-                    <WholePage session={session} id={params.id} isOwner={isOwner} />
-                </>
-            )}
+            <WholePage session={session} id={params.id} isOwner={isOwner} />
         </div>
     );
 }
