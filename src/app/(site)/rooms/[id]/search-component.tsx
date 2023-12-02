@@ -100,7 +100,7 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
                 onBlur={() => setShowResults(false)}
             />
             {showResults && search?.length > 2 && (
-                <div className="absolute top-[57px] w-[92%] z-10 m-[20px] mt-0 bg-white shadow-md">
+                <div className="absolute top-[57px] w-[92%] z-10 m-[20px] mt-0 bg-white shadow-md z-10">
                     <div className="p-[10px]  m-auto flex flex-col justify-center text-center">
                         {isLoading && (
                             <LiaSpinnerSolid

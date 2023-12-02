@@ -10,13 +10,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 
 interface Props {
     user: { id: Number; name: string; email: string; image: string };
+    setShowMobileUsers: Dispatch<SetStateAction<boolean>>;
 }
 
-export const User: FC<Props> = ({ user }) => {
+export const User: FC<Props> = ({ user, setShowMobileUsers }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -25,6 +26,12 @@ export const User: FC<Props> = ({ user }) => {
             <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                    onClick={() => setShowMobileUsers(true)}
+                    className="block lg:hidden">
+                    Joined Users
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

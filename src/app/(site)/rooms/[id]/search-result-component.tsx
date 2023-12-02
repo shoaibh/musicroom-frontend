@@ -11,7 +11,7 @@ const SearchResultComponent: FC<Props> = ({ songInfo, chooseSong }) => {
     return (
         <div
             className="flex justify-between py-4 px-0 items-center hover:bg-slate-200 cursor-pointer"
-            onClick={() => {
+            onMouseDown={() => {
                 chooseSong(songInfo);
             }}>
             <Image

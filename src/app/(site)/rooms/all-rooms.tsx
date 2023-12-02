@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Room } from './room';
 import axios from '@/app/libs/axios-config';
 import { useSocket } from '@/Context/SocketProvider';
@@ -33,13 +33,28 @@ export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
         };
     }, [isConnected, socket, jwt, queryClient]);
 
+    const { ownedRooms, recommendedRooms } = useMemo(() => {
+        if (data?.data?.data) {
+            const ownedRooms = data.data.data.filter((d: IRoom) => d?.owner?.id === userId);
+            const recommendedRooms = data.data.data.filter((d: IRoom) => d?.owner?.id !== userId);
+            return {
+                ownedRooms,
+                recommendedRooms
+            };
+        }
+        return {
+            ownedRooms: [],
+            recommendedRooms: []
+        };
+    }, [data?.data?.data, userId]);
+
     return (
         <div className="md:flex md:justify--around mt-7">
-            <MyRooms rooms={data?.data?.data || []} />
+            <MyRooms rooms={ownedRooms} />
 
             <div className="border-l border-slate-200 border-dashed h-[80vh] mt-[5px] hidden md:block" />
 
-            <RecommendedRooms rooms={data?.data?.data || []} />
+            <RecommendedRooms rooms={recommendedRooms} />
         </div>
     );
 };

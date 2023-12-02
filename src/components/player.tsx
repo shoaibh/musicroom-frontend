@@ -234,14 +234,6 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
                 //     Your browser does not support the audio element.
                 // </audio>
             )}
-            {!audioUrl && (
-                <span className="flex items-center pl-0 -ml-[10px] pt-[20px] gap-[10px] justify-center">
-                    <FaCircleInfo />
-                    {isOwner
-                        ? 'Search a song to start listening'
-                        : 'Tell to room owner to play a song'}
-                </span>
-            )}
         </div>
     );
 };

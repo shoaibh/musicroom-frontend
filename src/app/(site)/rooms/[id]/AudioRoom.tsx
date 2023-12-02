@@ -4,6 +4,7 @@ import Player from '@/components/player';
 import { SongDetails } from '@/components/songDetails';
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
+import { FaCircleInfo } from 'react-icons/fa6';
 
 export default function AudioRoom({
     id,
@@ -35,9 +36,9 @@ export default function AudioRoom({
 
     return (
         <>
-            {video?.data?.data && (
+            {data?.data?.data && (
                 <div className="w-full pt-4 pb-[20px]">
-                    {user && data?.data?.data && (
+                    {user && (
                         <Player
                             audioUrl={data.data.data?.audioUrl}
                             isOwner={isOwner}
@@ -45,7 +46,15 @@ export default function AudioRoom({
                             user={user}
                         />
                     )}
-                    {data?.data?.data && <SongDetails info={data?.data?.data} />}
+                    {<SongDetails info={data?.data?.data} />}
+                </div>
+            )}
+            {!data?.data?.data && (
+                <div className="flex items-center pl-0 -ml-[10px] pt-[20px] pb-[20px] gap-[10px] justify-center">
+                    <FaCircleInfo />
+                    {isOwner
+                        ? 'Search a song to start listening'
+                        : 'Tell to room owner to play a song'}
                 </div>
             )}
         </>
