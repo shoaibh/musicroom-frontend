@@ -1,0 +1,59 @@
+.playing {
+    display: flex;
+  }
+
+  .now.playing .bar {
+    display: inline-block;
+    position: relative;
+    margin-right: 3px;
+    width: 3px;
+    height: 1px;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #03a9fc, #036ca1);
+    color: transparent;
+    animation-name: pulse;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+  .paused.playing .bar {
+    animation-iteration-count: 1;
+  }
+  .paused.playing:after {
+    content: "Paused (Lame)"
+  }
+  .n1 {
+    animation-delay: 0.5s;
+  }
+  .n2 {
+    animation-delay: 0.2s;
+  }
+  .n3 {
+    animation-delay: 1.2s;
+  }
+
+  @keyframes pulse {
+    0% {
+      height: 1px;
+      margin-top: 0;
+    }
+    10% {
+      height: 30px;
+      margin-top: -30px;
+    }
+    50% {
+      height: 20px;
+      margin-top: -20px;
+    }
+    60% {
+      height: 25px;
+      margin-top: -25px;
+    }
+    80% {
+      height: 40px;
+      margin-top: -40px;
+    }
+    100% {
+      height: 1px;
+      margin-top: 0;
+    }
+  }

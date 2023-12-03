@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
 import SearchResultComponent from './search-result-component';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/lib/utils';
@@ -14,9 +14,10 @@ interface Props {
     jwt: string;
     id: string;
     isOwner: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
+const SearchComponent: FC<Props> = ({ jwt, id, isOwner, setOpen }) => {
     const [search, setSearch] = useState('');
 
     const queryClient = useQueryClient();
@@ -38,15 +39,23 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner }) => {
     const { mutate: chooseSong } = useMutation({
         // eslint-disable-next-line
         mutationFn: async (song: any) => {
+            console.log('==', { song });
             const response = await axios.put(`/room/update/${id}`, {
                 videoId: song.videoId,
-                currentSong: song?.title
+                currentSong: song?.title,
+                song: {
+                    name: song.title,
+                    video_id: song.videoId,
+                    image_url: song?.image,
+                    isPlaying: true
+                }
             });
             return response.data;
         },
         onSuccess: (song) => {
             socket?.emit('change-song', { song: song?.data, roomId: id });
             setSearch('');
+            setOpen(false);
         },
         onError: () => {
             toast.error('Something went wrong');

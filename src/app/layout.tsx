@@ -4,6 +4,7 @@ import ToasterContext from '@/Context/ToasterContext';
 import type { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
+import { MainContextProvider } from '@/Context/MainContext';
 
 export const metadata: Metadata = {
     title: 'Music Room',
@@ -18,8 +19,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                 <SocketProvider>
                     <TanstackProvider>
-                        <ToasterContext />
-                        {children}
+                        <MainContextProvider>
+                            <ToasterContext />
+                            {children}
+                        </MainContextProvider>
                     </TanstackProvider>
                 </SocketProvider>
             </body>

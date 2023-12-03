@@ -222,8 +222,8 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
                     // hasDefaultKeyBindings={false}
                     onPause={onPause}
                     onPlay={onPlay}
-                    // autoPlay={false}
-                    // autoPlayAfterSrcChange={false}
+                    autoPlay={false}
+                    autoPlayAfterSrcChange={false}
                     // onSeeking={() => setIsLoading(true)}
                     onSeeked={onSeek}
                     // onPause={() => clearInterval(timerId)}

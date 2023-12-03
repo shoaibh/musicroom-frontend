@@ -12,7 +12,7 @@ export const MyRooms: FC<Props> = ({ rooms }) => {
     }
 
     return (
-        <div className="w-full overflow-scroll">
+        <div className="w-full md:overflow-scroll h-full">
             <h1 className="text-center text-xl hidden md:block">My Rooms</h1>
             {rooms.map((r) => (
                 <Room

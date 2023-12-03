@@ -8,6 +8,7 @@ import { useSocket } from '@/Context/SocketProvider';
 import { IRoom } from '@/app/Constant';
 import { MyRooms } from './my-rooms';
 import { RecommendedRooms } from './recommended-rooms';
+import { useMainContext } from '@/Context/MainContext';
 
 export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
     const queryClient = useQueryClient();
@@ -19,6 +20,8 @@ export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
     });
 
     const { socket, isConnected } = useSocket();
+
+    const { isMobile } = useMainContext();
 
     useEffect(() => {
         if (!isConnected) return;
@@ -49,7 +52,9 @@ export const AllRooms = ({ jwt, userId }: { jwt: string; userId: Number }) => {
     }, [data?.data?.data, userId]);
 
     return (
-        <div className="md:flex md:justify--around mt-7">
+        <div
+            className="md:flex md:justify--around mt-7"
+            style={{ height: `${isMobile ? 'auto' : 'calc(100vh - 96px)'}` }}>
             <MyRooms rooms={ownedRooms} />
 
             <div className="border-l border-slate-200 border-dashed h-[80vh] mt-[5px] hidden md:block" />
