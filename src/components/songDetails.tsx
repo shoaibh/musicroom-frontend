@@ -8,7 +8,7 @@ interface Props {
 
 export const SongDetails: FC<Props> = ({ info }) => {
     return (
-        <div className="flex justify-center mt-[10px] md:gap-[20px] gap-[10px]">
+        <div className="flex justify-center mt-[10px] mx-[10px] md:gap-[20px] gap-[10px]">
             <Image
                 src={info?.thumbnails?.[0].url || '/default-song.png'}
                 width={54}

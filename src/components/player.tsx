@@ -1,25 +1,30 @@
 'use client';
 
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactAudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import './player.css';
 import { useSocket } from '@/Context/SocketProvider';
 import { FaCircleInfo } from 'react-icons/fa6';
+import { useQuery } from '@tanstack/react-query';
+import axios from '@/app/libs/axios-config';
+import { usePlaySong } from './hooks/usePlaySong';
 
 interface Props {
     audioUrl?: string;
     isOwner?: boolean;
     roomId?: string;
+    jwt: string;
     user: {
         id: Number;
         name: string;
         email: string;
         image: string;
     };
+    videoId?: string;
 }
 
-const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
+const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) => {
     const audioRef = useRef(null);
     const { socket, isConnected } = useSocket();
 
@@ -210,6 +215,37 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
         [socket, isConnected, roomId, isOwner]
     );
 
+    const { data: video } = useQuery({
+        queryKey: ['room_video_id', jwt, roomId],
+        queryFn: () => axios.get(`/room/${roomId}`),
+        enabled: !!jwt && !!roomId
+    });
+
+    const songQueue = useMemo(() => {
+        return video?.data?.data?.songQueue || [];
+    }, [video]);
+
+    const playSong = usePlaySong({ id: roomId });
+
+    const onClickNext = useCallback(() => {
+        for (let i = 0; i < songQueue.length - 1; i++) {
+            if (songQueue[i].video_id === videoId) {
+                playSong(songQueue[++i]);
+
+                break;
+            }
+        }
+    }, [songQueue, videoId]);
+
+    const onClickPrevious = useCallback(() => {
+        for (let i = 1; i < songQueue.length; i++) {
+            if (songQueue[i].video_id === videoId) {
+                playSong(songQueue[--i]);
+                break;
+            }
+        }
+    }, [songQueue, videoId]);
+
     return (
         <div className="player-component">
             {audioUrl && (
@@ -223,9 +259,14 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user }) => {
                     onPause={onPause}
                     onPlay={onPlay}
                     autoPlay={false}
-                    autoPlayAfterSrcChange={false}
+                    autoPlayAfterSrcChange
                     // onSeeking={() => setIsLoading(true)}
                     onSeeked={onSeek}
+                    onClickNext={onClickNext}
+                    onClickPrevious={onClickPrevious}
+                    // showJumpControls
+                    showSkipControls
+                    onEnded={onClickNext}
                     // onPause={() => clearInterval(timerId)}
                     // onEnded={onEnded}
                 />

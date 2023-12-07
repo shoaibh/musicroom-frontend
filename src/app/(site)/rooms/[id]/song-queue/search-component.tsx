@@ -20,34 +20,18 @@ interface Props {
 const SearchComponent: FC<Props> = ({ jwt, id, isOwner, setOpen }) => {
     const [search, setSearch] = useState('');
 
-    const queryClient = useQueryClient();
-
-    const { socket, isConnected } = useSocket();
-
-    useEffect(() => {
-        if (!isConnected) return;
-        if (!socket) return;
-        // eslint-disable-next-line
-        socket.on('receive-change-song', (song: any) => {
-            queryClient.invalidateQueries({ queryKey: ['room_video_id', jwt, id] });
-        });
-        return () => {
-            socket.off('receive-change-song');
-        };
-    }, [socket, jwt, id, queryClient, isConnected]);
+    const { socket } = useSocket();
 
     const { mutate: chooseSong } = useMutation({
         // eslint-disable-next-line
         mutationFn: async (song: any) => {
             console.log('==', { song });
-            const response = await axios.put(`/room/update/${id}`, {
-                videoId: song.videoId,
-                currentSong: song?.title,
+            const response = await axios.put(`/room/update_queue/${id}`, {
                 song: {
                     name: song.title,
                     video_id: song.videoId,
                     image_url: song?.image,
-                    isPlaying: true
+                    isPlaying: false
                 }
             });
             return response.data;

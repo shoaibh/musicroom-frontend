@@ -13,6 +13,9 @@ import { ChatComponent } from './chat/chat-component';
 import { JoinedUsers } from './joined-users/joined-users';
 import { JoinedUsersMobile } from './joined-users/joined-users-mobile';
 import { SongQueue } from './song-queue/song-queue';
+import axios from '@/app/libs/axios-config';
+import { useQuery } from '@tanstack/react-query';
+import { useGetRoom } from '@/components/hooks/useGetRoom';
 
 export const WholePage: FC<{
     session: Session | null;
@@ -40,10 +43,12 @@ export const WholePage: FC<{
 
     const { isMobile } = useMainContext();
 
+    const roomData = useGetRoom({ id, jwt: session?.backendTokens?.jwt });
+
     return (
         <div className="flex justify-around h-full bg-gray-100 gap-4 ">
             {!isMobile && (
-                <div className="bg-white max-w-[270px] min-w-[200px] w-full mt-[76px] mb-[30px] text-center rounded-2xl hidden lg:block">
+                <div className="bg-white max-w-[320px] min-w-[200px] w-full mt-[76px] mb-[30px] text-center rounded-2xl hidden lg:block">
                     {session && (
                         <SongQueue
                             jwt={session.backendTokens.jwt}
@@ -75,7 +80,10 @@ export const WholePage: FC<{
                             className="block lg:hidden cursor-pointer flex m-5 p-3 rounded-md bg-gray-400 gap-3"
                             onClick={() => setShowQueue(true)}>
                             <IoIosArrowUp size={25} color={'white'} />
-                            <span className="text-white">current song</span>
+                            <span className="text-white">
+                                {' '}
+                                {roomData?.currentSong || 'current song'}
+                            </span>
                         </div>
 
                         <div

@@ -40,6 +40,8 @@ export default function AudioRoom({
                             isOwner={isOwner}
                             roomId={id}
                             user={user}
+                            jwt={jwt}
+                            videoId={videoId}
                         />
                     )}
                     {<SongDetails info={data?.data?.data} />}
