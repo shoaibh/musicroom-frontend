@@ -28,7 +28,7 @@ export const SongDetails: FC<Props> = ({ info }) => {
                     }}>
                     {info?.title}
                 </div>
-                <div className="opacity-40">{info?.author?.name}</div>
+                <div className="opacity-40 text-xs">{info?.author?.name}</div>
             </div>
         </div>
     );

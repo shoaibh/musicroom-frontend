@@ -32,11 +32,10 @@ export const WholePage: FC<{
         socket.emit('join-room', { roomId: id, userId: session?.user?.id });
 
         return () => {
+            socket.emit('leave-room', { roomId: id, userId: session?.user?.id });
             socket.off('join-room');
         };
     }, [socket, id, isConnected, session?.user?.id]);
-
-    console.log('==', { isOwner });
 
     const [showMobileUsers, setShowMobileUsers] = useState(false);
     const [showQueue, setShowQueue] = useState(false);
@@ -117,7 +116,14 @@ export const WholePage: FC<{
                     />
                 )} */}
             </div>
-            <JoinedUsers />
+            {session && (
+                <JoinedUsers
+                    jwt={session.backendTokens.jwt}
+                    id={id}
+                    isOwner={isOwner}
+                    user={session.user}
+                />
+            )}
         </div>
     );
 };

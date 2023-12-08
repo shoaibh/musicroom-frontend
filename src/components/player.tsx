@@ -259,7 +259,7 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) =>
                     onPause={onPause}
                     onPlay={onPlay}
                     autoPlay={false}
-                    autoPlayAfterSrcChange
+                    autoPlayAfterSrcChange={false}
                     // onSeeking={() => setIsLoading(true)}
                     onSeeked={onSeek}
                     onClickNext={onClickNext}
