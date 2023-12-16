@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import toast from 'react-hot-toast';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 interface Props {
     providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
@@ -22,6 +23,8 @@ interface FormData {
 
 export const SignInForm: FC<Props> = ({ providers }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [recaptchaValue, setRecaptchaValue] = useState(null);
+
     const router = useRouter();
     const [formData, setFormData] = useState<FormData>({
         email: '',
@@ -41,9 +44,14 @@ export const SignInForm: FC<Props> = ({ providers }) => {
 
         try {
             setIsLoading(true);
+            if (!recaptchaValue) {
+                toast.error('reCAPTCHA not verified');
+                return;
+            }
             signIn('credentials', {
                 email: formData.email,
                 password: formData.password,
+                recaptchaValue,
                 redirect: false
             }).then((callback) => {
                 if (callback?.error) {
@@ -59,6 +67,12 @@ export const SignInForm: FC<Props> = ({ providers }) => {
             setIsLoading(false);
         }
     };
+
+    const handleRecaptcha = (value: any) => {
+        // Store the reCAPTCHA response in state or use it as needed
+        setRecaptchaValue(value);
+    };
+
     return (
         <Card>
             <form onSubmit={handleSubmit}>
@@ -96,7 +110,12 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                             required
                         />{' '}
                     </div>
+                    <ReCAPTCHA
+                        sitekey="6LeHwTMpAAAAACkl1G2gMl59khTv9TfIurfhk5Y3"
+                        onChange={handleRecaptcha}
+                    />
                 </CardContent>
+
                 <CardFooter className="flex flex-col">
                     <Button className="w-full" type="submit" disabled={isLoading}>
                         Login

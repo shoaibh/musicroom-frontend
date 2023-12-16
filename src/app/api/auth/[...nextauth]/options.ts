@@ -3,21 +3,21 @@ import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
-async function refreshToken(token: JWT): Promise<JWT> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/refresh`, {
-        method: 'POST',
-        headers: {
-            refreshtoken: `${token.backendTokens.refreshToken}`
-        }
-    });
+// async function refreshToken(token: JWT): Promise<JWT> {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/refresh`, {
+//         method: 'POST',
+//         headers: {
+//             refreshtoken: `${token.backendTokens.refreshToken}`
+//         }
+//     });
 
-    const response = await res.json();
+//     const response = await res.json();
 
-    return {
-        ...token,
-        backendTokens: response
-    };
-}
+//     return {
+//         ...token,
+//         backendTokens: response
+//     };
+// }
 
 export const options: NextAuthOptions = {
     providers: [
@@ -37,9 +37,13 @@ export const options: NextAuthOptions = {
                     label: 'Password:',
                     type: 'password',
                     placeholder: 'password'
+                },
+                recaptchaValue: {
+                    type: 'text'
                 }
             },
             async authorize(credentials) {
+                console.log('==', { credentials });
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`, {
                     method: 'POST',
                     headers: {
@@ -47,7 +51,8 @@ export const options: NextAuthOptions = {
                     },
                     body: JSON.stringify({
                         email: credentials?.email,
-                        password: credentials?.password
+                        password: credentials?.password,
+                        recaptchaValue: credentials?.recaptchaValue
                     })
                 });
                 if (response.status === 401) {

@@ -73,7 +73,6 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner, setOpen }) => {
 
     const [showResults, setShowResults] = useState(false);
 
-    if (!isOwner) return null;
     return (
         <div className="flex justify-center w-full pt-5 flex-col pb-[15px] relative">
             <Input

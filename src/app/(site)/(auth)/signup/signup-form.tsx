@@ -20,6 +20,8 @@ import { toast } from 'react-hot-toast';
 import { BsGoogle } from 'react-icons/bs';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../../../firebaseConfig';
+import ReCAPTCHA from 'react-google-recaptcha';
+import Image from 'next/image';
 
 interface FormData {
     name: string;
@@ -27,6 +29,12 @@ interface FormData {
     password: string;
     confirmPassword: string;
 }
+
+const getBase64 = (img: File, callback: (url: string) => void) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result as string));
+    reader.readAsDataURL(img);
+};
 
 export const SignUpForm: FC = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -47,16 +55,27 @@ export const SignUpForm: FC = () => {
     };
 
     const [imageFile, setImageFile] = useState<File>();
+    const [imageUrl, setImageUrl] = useState<string>('');
 
     const handleSelectedFile = (files: any) => {
         console.log('==', { files });
         if (files && files[0].size < 10000000) {
             setImageFile(files[0]);
-
+            getBase64(files[0], (url) => {
+                console.log('==url', { url });
+                setImageUrl(url);
+            });
             console.log(files[0]);
         } else {
             console.log('file too large');
         }
+    };
+
+    const [recaptchaValue, setRecaptchaValue] = useState(null);
+
+    const handleRecaptcha = (value: any) => {
+        // Store the reCAPTCHA response in state or use it as needed
+        setRecaptchaValue(value);
     };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -68,6 +87,10 @@ export const SignUpForm: FC = () => {
 
         try {
             setIsLoading(true);
+            if (!recaptchaValue) {
+                toast.error('reCAPTCHA not verified');
+                return;
+            }
             const { confirmPassword, ...rest } = formData;
             let downloadUrl = '';
             if (imageFile) {
@@ -102,7 +125,11 @@ export const SignUpForm: FC = () => {
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
-                                    body: JSON.stringify({ ...rest, image_url: downloadUrl })
+                                    body: JSON.stringify({
+                                        ...rest,
+                                        image_url: downloadUrl,
+                                        recaptchaValue
+                                    })
                                 }
                             );
                             if (response.status !== 201) {
@@ -116,6 +143,7 @@ export const SignUpForm: FC = () => {
                 );
             } else {
                 console.error('File not found');
+                toast.error(`Something went wrong`);
             }
         } catch (e) {
             toast.error(`Something went wrong, ${e}`);
@@ -185,12 +213,31 @@ export const SignUpForm: FC = () => {
                             required
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Input
+                    <div className=" gap-2 flex items-center min-h-[55px]">
+                        <input
                             type="file"
+                            name="file-input"
+                            id="file-input"
+                            className="max-w-[250px]"
                             onChange={(files) => handleSelectedFile(files.target.files)}
-                        />{' '}
+                        />
+                        {imageUrl && (
+                            <div className=" relative w-[55px] h-[55px] rounded-full overflow-hidden">
+                                <Image
+                                    src={imageUrl}
+                                    alt="user"
+                                    className="rounded-full"
+                                    objectFit="cover"
+                                    objectPosition="50% 50%"
+                                    layout="fill"
+                                />
+                            </div>
+                        )}
                     </div>
+                    <ReCAPTCHA
+                        sitekey="6LeHwTMpAAAAACkl1G2gMl59khTv9TfIurfhk5Y3"
+                        onChange={handleRecaptcha}
+                    />
                 </CardContent>
                 <CardFooter className="flex flex-col">
                     <Button className="w-full" type="submit" disabled={isLoading}>
