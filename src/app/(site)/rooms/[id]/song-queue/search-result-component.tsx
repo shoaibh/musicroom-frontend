@@ -10,7 +10,7 @@ interface Props {
 const SearchResultComponent: FC<Props> = ({ songInfo, chooseSong }) => {
     return (
         <div
-            className="flex justify-between py-4 px-0 items-center hover:bg-slate-200 cursor-pointer"
+            className="flex hover:bg-accent hover:text-accent-foreground justify-between py-4 px-0 items-center cursor-pointer"
             onMouseDown={() => {
                 chooseSong(songInfo);
             }}>
@@ -21,8 +21,16 @@ const SearchResultComponent: FC<Props> = ({ songInfo, chooseSong }) => {
                 height={54}
                 className="rounded-full h-[54px] w-[54px] ml-4"
             />
-            <div className="max-w-[250px]">
-                <div>{songInfo.title}</div>
+            <div className="max-w-[220px]">
+                <div
+                    style={{
+                        display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        WebkitLineClamp: 1
+                    }}>
+                    {songInfo.title}
+                </div>
                 <div className="opacity-40">{songInfo.author?.name}</div>
             </div>
             <div className="opacity-40 mr-4">{songInfo.timestamp}</div>

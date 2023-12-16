@@ -12,10 +12,9 @@ export const Room: FC<IRoom> = ({
     owner,
     name = "AR Rahman's collection",
     roomPic = '/music-room.png',
-    memberCount,
+    memberCount = 0,
     currentSong
 }) => {
-    console.log('==', {});
     return (
         <Card className="w-11/12 mx-auto mt-5 relative">
             <Link href={`/rooms/${_id}`}>
@@ -27,7 +26,7 @@ export const Room: FC<IRoom> = ({
                 <CardFooter className="justify-between">
                     <div className="flex gap-1">
                         <Image src={'/memberCount.svg'} width={20} height={20} alt="member count" />
-                        {memberCount && <span>{memberCount}</span>}
+                        <span>{memberCount}</span>
                     </div>
                     <div className="flex items-center gap-1">
                         <Image src={'/currentSong.svg'} width={20} height={20} alt="current song" />
