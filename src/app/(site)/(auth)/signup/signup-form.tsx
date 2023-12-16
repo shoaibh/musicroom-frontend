@@ -18,6 +18,8 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { BsGoogle } from 'react-icons/bs';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../../../firebaseConfig';
 
 interface FormData {
     name: string;
@@ -44,6 +46,19 @@ export const SignUpForm: FC = () => {
         }));
     };
 
+    const [imageFile, setImageFile] = useState<File>();
+
+    const handleSelectedFile = (files: any) => {
+        console.log('==', { files });
+        if (files && files[0].size < 10000000) {
+            setImageFile(files[0]);
+
+            console.log(files[0]);
+        } else {
+            console.log('file too large');
+        }
+    };
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (formData.password !== formData.confirmPassword) {
@@ -54,18 +69,53 @@ export const SignUpForm: FC = () => {
         try {
             setIsLoading(true);
             const { confirmPassword, ...rest } = formData;
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(rest)
-            });
-            if (response.status !== 201) {
-                toast.error('Something went wrong');
+            let downloadUrl = '';
+            if (imageFile) {
+                let name = imageFile.name;
+                name = Date.now() + name;
+                const storageRef = ref(storage, `image/${name}`);
+                const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        switch (snapshot.state) {
+                            case 'paused':
+                                console.log('Upload is paused');
+                                break;
+                            case 'running':
+                                console.log('Upload is running');
+                                break;
+                        }
+                    },
+                    (error) => {
+                        console.error(error.message);
+                    },
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+                            //url is download url of file
+                            downloadUrl = url;
+                            const response = await fetch(
+                                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signup`,
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ ...rest, image_url: downloadUrl })
+                                }
+                            );
+                            if (response.status !== 201) {
+                                toast.error('Something went wrong');
+                            } else {
+                                toast.success('Signed Up Successfully');
+                                router.push('/signin');
+                            }
+                        });
+                    }
+                );
             } else {
-                toast.success('Signed Up Successfully');
-                router.push('/signin');
+                console.error('File not found');
             }
         } catch (e) {
             toast.error(`Something went wrong, ${e}`);
@@ -134,6 +184,12 @@ export const SignUpForm: FC = () => {
                             type="password"
                             required
                         />
+                    </div>
+                    <div className="grid gap-2">
+                        <Input
+                            type="file"
+                            onChange={(files) => handleSelectedFile(files.target.files)}
+                        />{' '}
                     </div>
                 </CardContent>
                 <CardFooter className="flex flex-col">

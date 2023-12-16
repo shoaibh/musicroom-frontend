@@ -4,6 +4,7 @@ import { usePlaySong } from '@/components/hooks/usePlaySong';
 import { MusicBar } from '@/components/music/music-bar';
 import Image from 'next/image';
 import { FC } from 'react';
+import toast from 'react-hot-toast';
 
 export const QueueItem: FC<{
     id: string;
@@ -13,13 +14,20 @@ export const QueueItem: FC<{
         image_url: string;
         isPlaying: boolean;
     };
-}> = ({ id, song }) => {
+    isOwner: boolean;
+}> = ({ id, song, isOwner }) => {
     const playSong = usePlaySong({ id });
 
     return (
         <div
             className="border relative border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground my-3  mx-10 lg:mx-5 p-2 rounded-lg cursor-pointer flex justify-start text-start items-center gap-[10px]"
-            onClick={() => playSong(song)}>
+            onClick={() => {
+                if (isOwner) {
+                    playSong(song);
+                } else {
+                    toast.error('only owners can play the song, you can update the list though');
+                }
+            }}>
             <div className="relative rounded-full">
                 {song?.isPlaying && (
                     <div className="absolute top-0 right-0 bottom-0 left-0 bg-black opacity-50 rounded-full"></div>

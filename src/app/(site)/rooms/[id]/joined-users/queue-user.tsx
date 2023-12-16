@@ -10,13 +10,14 @@ export const QueueUser: FC<{ name: string; email: string; image: string | null }
 }) => {
     return (
         <div className="border relative border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground my-3  mx-10 lg:mx-5 p-2 rounded-lg cursor-pointer flex justify-start text-start items-center gap-[10px]">
-            <div className="relative rounded-full">
+            <div className="relative w-11 h-11 rounded-full overflow-hidden">
                 <Image
                     src={image || '/user_default.svg'}
-                    width={50}
-                    height={50}
-                    alt="song"
-                    className="rounded-full min-h-[50px] max-h-[50px] min-w-[50px] max-w-[50px]"
+                    alt="user"
+                    className="rounded-full"
+                    objectFit="cover"
+                    objectPosition="50% 50%"
+                    layout="fill"
                 />
             </div>
             <div className="max-w-[350px] ">

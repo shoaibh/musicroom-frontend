@@ -2,6 +2,7 @@ import { useSocket } from '@/Context/SocketProvider';
 import { useMutation } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
 import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 export const usePlaySong = ({ id }: { id?: string }) => {
     const { socket } = useSocket();
@@ -23,8 +24,8 @@ export const usePlaySong = ({ id }: { id?: string }) => {
         onSuccess: (song) => {
             socket?.emit('change-song', { song: song?.data, roomId: id });
         },
-        onError: () => {
-            toast.error('Something went wrong');
+        onError: (e: { response: { data: { message: string } } }) => {
+            toast.error(e.response?.data.message);
         }
     });
     return playSong;

@@ -44,7 +44,7 @@ export const JoinedUsers: FC<Props> = ({ id, jwt, isOwner, user }) => {
     }, [socket, jwt, id, queryClient, isConnected]);
 
     return (
-        <div className="bg-white max-w-[320px] min-w-[200px] w-full mt-[76px] mb-[30px] text-center rounded-2xl hidden lg:block">
+        <>
             <h2 className="text-xl mt-[18px]">Joined Users</h2>
 
             {roomUsers?.map((user: any) => (
@@ -55,6 +55,6 @@ export const JoinedUsers: FC<Props> = ({ id, jwt, isOwner, user }) => {
                     email={user?.user?.email}
                 />
             ))}
-        </div>
+        </>
     );
 };

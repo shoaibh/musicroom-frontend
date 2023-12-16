@@ -2,11 +2,25 @@
 
 import React, { Dispatch, FC, SetStateAction, useEffect, useRef } from 'react';
 import { IoClose } from 'react-icons/io5';
+import { JoinedUsers } from './joined-users';
 
-export const JoinedUsersMobile: FC<{ setShowMobileUsers: Dispatch<SetStateAction<boolean>> }> = ({
-    setShowMobileUsers
-}) => {
+interface Props {
+    id: string;
+    jwt?: string;
+    isOwner: boolean;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        image: string;
+    };
+    setShowMobileUsers: Dispatch<SetStateAction<boolean>>;
+}
+
+export const JoinedUsersMobile: FC<Props> = ({ setShowMobileUsers, id, jwt, isOwner, user }) => {
     const divRef = useRef<HTMLDivElement>(null);
+
+    console.log('==joine');
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -25,9 +39,8 @@ export const JoinedUsersMobile: FC<{ setShowMobileUsers: Dispatch<SetStateAction
     return (
         <div
             ref={divRef}
-            className="bg-white max-w-[220px] w-full mt-[76px] mb-[30px] text-center rounded-2xl absolute block lg:hidden right-[30px] z-10 h-[80%] border border-slate-200  border-solid bg-popover"
+            className="bg-white max-w-[320px] w-full mt-[76px] mb-[30px] text-center rounded-2xl absolute block lg:hidden right-[30px] z-10 h-[80%] border border-slate-200  border-solid bg-popover"
             onBlur={() => {
-                console.log('==blur');
                 setShowMobileUsers(false);
             }}
             tabIndex={0}>
@@ -36,7 +49,7 @@ export const JoinedUsersMobile: FC<{ setShowMobileUsers: Dispatch<SetStateAction
                 onClick={() => setShowMobileUsers(false)}>
                 <IoClose size={20} />
             </div>
-            <div className="mt-3">Joined User</div>
+            <JoinedUsers jwt={jwt} id={id} isOwner={isOwner} user={user} />
         </div>
     );
 };

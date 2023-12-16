@@ -58,7 +58,7 @@ export const SongQueue: FC<Props> = ({ id, jwt, isOwner, user }) => {
                         video_id: string;
                         image_url: string;
                         isPlaying: boolean;
-                    }) => <QueueItem song={song} id={id} key={song?.video_id} />
+                    }) => <QueueItem song={song} id={id} key={song?.video_id} isOwner={isOwner} />
                 )}
             </div>
 

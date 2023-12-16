@@ -21,14 +21,23 @@ export const User: FC<Props> = ({ user, setShowMobileUsers }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
-                <Image src={user.image || '/user_default.svg'} width={40} height={40} alt="user" />
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                    <Image
+                        src={user.image || '/user_default.svg'}
+                        alt="user"
+                        className="rounded-full"
+                        objectFit="cover"
+                        objectPosition="50% 50%"
+                        layout="fill"
+                    />
+                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                    // onClick={() => setShowMobileUsers(true)}
+                    onClick={() => setShowMobileUsers && setShowMobileUsers(true)}
                     className="block lg:hidden">
                     Joined Users
                 </DropdownMenuItem>
