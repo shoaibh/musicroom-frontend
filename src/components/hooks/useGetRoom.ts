@@ -18,5 +18,5 @@ export const useGetRoomUsers = ({ id, jwt }: { id?: string; jwt?: string }) => {
         enabled: !!jwt && !!id
     });
 
-    return video?.data?.data;
+    return video?.data?.data || [];
 };

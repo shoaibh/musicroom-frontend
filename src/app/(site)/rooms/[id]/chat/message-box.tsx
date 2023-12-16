@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 const MessageBox: React.FC<{
     data: {
         sender: {
-            id: Number;
+            _id: string;
             name: string;
             email: string;
             image: string;

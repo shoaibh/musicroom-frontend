@@ -16,7 +16,7 @@ interface Props {
     roomId?: string;
     jwt: string;
     user: {
-        id: Number;
+        id: string;
         name: string;
         email: string;
         image: string;

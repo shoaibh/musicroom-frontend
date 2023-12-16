@@ -18,8 +18,7 @@ export default async function PlayerRoom({ params }: { params: { id: string } })
 
     const response = await res.json();
 
-    const isOwner = response?.data?.ownerId === session?.user?.id;
-
+    const isOwner = response?.data?.owner?._id === session?.user?.id;
     return (
         <div className="h-[100vh] flex flex-col justify-between">
             <WholePage session={session} id={params.id} isOwner={isOwner} />

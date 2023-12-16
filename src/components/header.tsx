@@ -4,7 +4,7 @@ import { Logo } from './logo';
 
 export const Header: FC<{
     user: {
-        id: Number;
+        id: string;
         name: string;
         email: string;
         image: string;

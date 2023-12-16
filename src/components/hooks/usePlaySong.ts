@@ -16,7 +16,7 @@ export const usePlaySong = ({ id }: { id?: string }) => {
         }) => {
             const response = await axios.put(`/room/update_song/${id}`, {
                 videoId: song?.video_id,
-                currentSong: song?.name
+                currentSong: song
             });
             return response.data;
         },

@@ -15,7 +15,7 @@ interface Props {
     jwt?: string;
     isOwner: boolean;
     user: {
-        id: Number;
+        id: string;
         name: string;
         email: string;
         image: string;

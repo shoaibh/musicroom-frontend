@@ -12,7 +12,7 @@ interface Props {
     jwt?: string;
     isOwner: boolean;
     user: {
-        id: Number;
+        id: string;
         name: string;
         email: string;
         image: string;
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export const JoinedUsers: FC<Props> = ({ id, jwt, isOwner, user }) => {
-    const roomUsers = useGetRoomUsers({ jwt, id });
+    const roomUsers = useGetRoomUsers({ jwt, id }) || [];
 
     const queryClient = useQueryClient();
 
@@ -48,7 +48,12 @@ export const JoinedUsers: FC<Props> = ({ id, jwt, isOwner, user }) => {
             <h2 className="text-xl mt-[18px]">Joined Users</h2>
 
             {roomUsers?.map((user: any) => (
-                <QueueUser key={user?.id} image={user?.image} name={user.name} email={user.email} />
+                <QueueUser
+                    key={user?.user?._id}
+                    image={user?.user?.image}
+                    name={user?.user?.name}
+                    email={user?.user?.email}
+                />
             ))}
         </div>
     );

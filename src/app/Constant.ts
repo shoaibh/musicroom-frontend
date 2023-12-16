@@ -1,14 +1,18 @@
 export interface IRoom {
-    id: number;
+    _id: string;
     name: string;
-    currentSong?: string;
+    currentSong?: {
+        name: string;
+    };
     owner?: Owner;
     roomPic?: string;
     memberCount?: number;
+    isOwner?: boolean;
+    joinedUsers?: string[];
 }
 
 export interface Owner {
-    id: number;
+    _id: string;
     name: string;
     email: string;
     image: string;

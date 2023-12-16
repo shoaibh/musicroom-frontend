@@ -13,8 +13,8 @@ import Image from 'next/image';
 import { Dispatch, FC, SetStateAction } from 'react';
 
 interface Props {
-    user: { id: Number; name: string; email: string; image: string };
-    setShowMobileUsers: Dispatch<SetStateAction<boolean>>;
+    user: { id: string; name: string; email: string; image: string };
+    setShowMobileUsers?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const User: FC<Props> = ({ user, setShowMobileUsers }) => {
@@ -28,7 +28,7 @@ export const User: FC<Props> = ({ user, setShowMobileUsers }) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                    onClick={() => setShowMobileUsers(true)}
+                    // onClick={() => setShowMobileUsers(true)}
                     className="block lg:hidden">
                     Joined Users
                 </DropdownMenuItem>

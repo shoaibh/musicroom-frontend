@@ -7,16 +7,18 @@ import Link from 'next/link';
 import { IRoom } from '@/app/Constant';
 
 export const Room: FC<IRoom> = ({
-    id = 1,
+    _id = '1',
+    isOwner,
     owner,
     name = "AR Rahman's collection",
     roomPic = '/music-room.png',
     memberCount,
-    currentSong = 'no song selected'
+    currentSong
 }) => {
+    console.log('==', {});
     return (
         <Card className="w-11/12 mx-auto mt-5 relative">
-            <Link href={`/rooms/${id}`}>
+            <Link href={`/rooms/${_id}`}>
                 <CardHeader className="flex-row items-center justify-between pt-[10px] pb-0">
                     <CardTitle className="opacity-50">{owner?.name || 'shoaib'}</CardTitle>
                     <Image src={roomPic} width={40} height={40} alt="room pic" />
@@ -30,11 +32,11 @@ export const Room: FC<IRoom> = ({
                     <div className="flex items-center gap-1">
                         <Image src={'/currentSong.svg'} width={20} height={20} alt="current song" />
                         <span className="opacity-70 text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
-                            {currentSong}
+                            {currentSong?.name}
                         </span>
                     </div>
                 </CardFooter>
-                {owner?.roomOwned && (
+                {isOwner && (
                     <div className="absolute text-white bg-black rounded-tl-[7px] rounded-tr-[2px] rounded-br-[2px] rounded-bl-[2px] text-xs px-[5px] py-0 top-[2px] left-[2px]">
                         owned
                     </div>

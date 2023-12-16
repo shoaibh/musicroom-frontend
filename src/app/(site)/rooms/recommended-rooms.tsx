@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const RecommendedRooms: FC<Props> = ({ rooms }) => {
-    if (rooms.length <= 0) {
+    if (rooms?.length <= 0) {
         return <div className="w-full text-center ">No Rooms created yet</div>;
     }
 
@@ -18,8 +18,8 @@ export const RecommendedRooms: FC<Props> = ({ rooms }) => {
             {rooms.map((r) => (
                 <Room
                     name={r.name}
-                    id={r.id}
-                    key={r.id}
+                    _id={r._id}
+                    key={r._id}
                     currentSong={r.currentSong || undefined}
                     owner={r.owner}
                 />

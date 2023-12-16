@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { HiPaperAirplane } from 'react-icons/hi2';
 import MessageBox from './message-box';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from '@/app/libs/axios-config';
 
 export const ChatComponent: FC<{
     user: {
-        id: Number;
+        id: string;
         name: string;
         email: string;
         image: string;
@@ -17,18 +19,6 @@ export const ChatComponent: FC<{
     roomId: string;
 }> = ({ user, roomId }) => {
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState<
-        Array<{
-            sender: {
-                id: Number;
-                name: string;
-                email: string;
-                image: string;
-            };
-            message: string;
-            createdAt: number;
-        }>
-    >([]);
 
     // eslint-disable-next-line
     const lastMessageRef = useCallback((node: any) => {
@@ -39,19 +29,21 @@ export const ChatComponent: FC<{
 
     const { socket, isConnected } = useSocket();
 
+    const { data: messages } = useQuery({
+        queryKey: ['messages', roomId],
+        queryFn: () => axios.get(`/chat-messages/${roomId}`),
+        enabled: !!roomId
+    });
+
+    const queryClient = useQueryClient();
+
     useEffect(() => {
-        // Load chat messages from Redis when the component mounts
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat-messages/${roomId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data) setMessages(data);
-            });
         if (!isConnected) return;
         if (!socket) return;
         // Listen for new messages from WebSocket
         // eslint-disable-next-line
         socket.on('receive-message', (data: any) => {
-            setMessages((messages) => [...messages, data]);
+            queryClient.invalidateQueries({ queryKey: ['messages', roomId] });
         });
 
         return () => {
@@ -63,7 +55,7 @@ export const ChatComponent: FC<{
         if (!socket) return;
 
         const payload = {
-            sender: { ...user },
+            sender: user.id,
             message,
             roomId,
             createdAt: Date.now()
@@ -76,14 +68,14 @@ export const ChatComponent: FC<{
         <div className="overflow-scroll flex-1">
             <div className="h-full flex flex-col">
                 <div className="flex-1 overflow-y-auto bg-white p-4 shadow-inner">
-                    {messages?.map((msg, index) => {
-                        const lastMessage = messages.length - 1 === index;
+                    {messages?.data?.map((msg: any, index: any) => {
+                        const lastMessage = messages?.data.length - 1 === index;
                         return (
                             <div key={index} ref={lastMessage ? lastMessageRef : null}>
                                 <MessageBox
                                     data={msg}
                                     key={index}
-                                    isOwn={user.email === msg.sender.email}
+                                    isOwn={user.id === msg.sender._id}
                                 />
                             </div>
                         );
