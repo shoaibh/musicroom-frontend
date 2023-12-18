@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import toast from 'react-hot-toast';
 import ReCAPTCHA from 'react-google-recaptcha';
+import SocialButton from '@/components/social-button';
+import { BsGoogle } from 'react-icons/bs';
 
 interface Props {
     providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
@@ -48,19 +50,19 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                 toast.error('reCAPTCHA not verified');
                 return;
             }
-            signIn('credentials', {
+            const callback = await signIn('credentials', {
                 email: formData.email,
                 password: formData.password,
                 recaptchaValue,
                 redirect: false
-            }).then((callback) => {
-                if (callback?.error) {
-                    toast.error('Something went wrong');
-                } else {
-                    toast.success('Signed In Successfully');
-                    router.push('/');
-                }
             });
+
+            if (callback?.error) {
+                toast.error('Something went wrong');
+            } else {
+                toast.success('Signed In Successfully');
+                router.push('/');
+            }
         } catch (e) {
             toast.error(`Something went wrong, ${e}`);
         } finally {
@@ -80,12 +82,10 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                     <CardTitle className="text-2xl text-center">Sign in</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                    {/* <SocialButton
-            icon={BsGoogle}
-            onClick={() =>
-              signIn("google", { redirect: true, callbackUrl: "/" })
-            }
-          /> */}
+                    <SocialButton
+                        icon={BsGoogle}
+                        onClick={() => signIn('google', { redirect: true, callbackUrl: '/' })}
+                    />
 
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
@@ -117,7 +117,11 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                 </CardContent>
 
                 <CardFooter className="flex flex-col">
-                    <Button className="w-full" type="submit" disabled={isLoading}>
+                    <Button
+                        className="w-full"
+                        type="submit"
+                        disabled={isLoading}
+                        isLoading={isLoading}>
                         Login
                     </Button>
                     <p className="mt-2 text-xs text-center text-gray-700">

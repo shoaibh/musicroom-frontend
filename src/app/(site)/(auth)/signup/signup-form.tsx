@@ -15,13 +15,14 @@ import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, FC, FormEvent, useState } from 'react';
+import { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { BsGoogle } from 'react-icons/bs';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../../../firebaseConfig';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Image from 'next/image';
+import { debounce } from '@/lib/utils';
 
 interface FormData {
     name: string;
@@ -45,6 +46,22 @@ export const SignUpForm: FC = () => {
         password: '',
         confirmPassword: ''
     });
+    const [passwordError, setPasswordError] = useState('');
+
+    const checkPassword = useCallback(
+        debounce((value) => {
+            if (value.length < 8) {
+                setPasswordError('Password must be at least 8 characters');
+            } else if (!/[A-Z]/.test(value)) {
+                setPasswordError('Password must contain at least one capital letter');
+            } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(value)) {
+                setPasswordError('Password must contain at least one special character');
+            } else {
+                setPasswordError('');
+            }
+        }, 300),
+        []
+    );
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -52,20 +69,18 @@ export const SignUpForm: FC = () => {
             ...prevData,
             [name]: value
         }));
+        if (name === 'password') checkPassword(value);
     };
 
     const [imageFile, setImageFile] = useState<File>();
     const [imageUrl, setImageUrl] = useState<string>('');
 
     const handleSelectedFile = (files: any) => {
-        console.log('==', { files });
         if (files && files[0].size < 10000000) {
             setImageFile(files[0]);
             getBase64(files[0], (url) => {
-                console.log('==url', { url });
                 setImageUrl(url);
             });
-            console.log(files[0]);
         } else {
             console.log('file too large');
         }
@@ -80,6 +95,7 @@ export const SignUpForm: FC = () => {
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         if (formData.password !== formData.confirmPassword) {
             toast.error("passwords don't match");
             return;
@@ -87,6 +103,8 @@ export const SignUpForm: FC = () => {
 
         try {
             setIsLoading(true);
+            console.log('==here');
+            setTimeout(() => {}, 3000);
             if (!recaptchaValue) {
                 toast.error('reCAPTCHA not verified');
                 return;
@@ -107,6 +125,7 @@ export const SignUpForm: FC = () => {
                                 console.log('Upload is paused');
                                 break;
                             case 'running':
+                                setIsLoading(true);
                                 console.log('Upload is running');
                                 break;
                         }
@@ -133,8 +152,11 @@ export const SignUpForm: FC = () => {
                                 }
                             );
                             if (response.status !== 201) {
+                                setIsLoading(false);
                                 toast.error('Something went wrong');
                             } else {
+                                setIsLoading(false);
+
                                 toast.success('Signed Up Successfully');
                                 router.push('/signin');
                             }
@@ -151,10 +173,16 @@ export const SignUpForm: FC = () => {
             setIsLoading(false);
         }
     };
+    console.log('==', { isLoading });
 
     return (
         <Card>
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={(e) => {
+                    setIsLoading(true);
+
+                    handleSubmit(e);
+                }}>
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
                     <CardDescription className="text-center">
@@ -163,10 +191,10 @@ export const SignUpForm: FC = () => {
                 </CardHeader>
 
                 <CardContent className="grid gap-4">
-                    <SocialButton
+                    {/* <SocialButton
                         icon={BsGoogle}
                         onClick={() => signIn('google', { redirect: true, callbackUrl: '/' })}
-                    />
+                    /> */}
 
                     <div className="grid gap-2">
                         <Label htmlFor="name">Name</Label>
@@ -191,6 +219,7 @@ export const SignUpForm: FC = () => {
                             required
                         />
                     </div>
+
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
@@ -202,6 +231,7 @@ export const SignUpForm: FC = () => {
                             required
                         />
                     </div>
+                    {passwordError && <span className="text-red-500 text-xs">{passwordError}</span>}
                     <div className="grid gap-2">
                         <Label htmlFor="confirmPassword">Re-Enter Password</Label>
                         <Input
@@ -213,6 +243,9 @@ export const SignUpForm: FC = () => {
                             required
                         />
                     </div>
+                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                        <span className="text-red-500 text-xs">passwords don't match</span>
+                    )}
                     <div className=" gap-2 flex items-center min-h-[55px]">
                         <input
                             type="file"
@@ -240,7 +273,11 @@ export const SignUpForm: FC = () => {
                     />
                 </CardContent>
                 <CardFooter className="flex flex-col">
-                    <Button className="w-full" type="submit" disabled={isLoading}>
+                    <Button
+                        className="w-full"
+                        type="submit"
+                        disabled={isLoading}
+                        isLoading={isLoading}>
                         Sign Up
                     </Button>
                     <p className="mt-2 text-xs text-center text-gray-700">

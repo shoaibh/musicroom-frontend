@@ -78,19 +78,31 @@ export const options: NextAuthOptions = {
     },
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
-            if (account?.provider === 'google') {
+            return true;
+        },
+        async jwt(props) {
+            const { token, user, account, profile } = props;
+
+            if (user) return { ...token, ...user };
+
+            return token;
+            // if (new Date().getTime() < token.backendTokens?.expiresIn) return token;
+
+            // return await refreshToken(token);
+        },
+        async session({ token, session, user }) {
+            // console.log('==session', { token, session, user });
+
+            if (!token.user && session?.user) {
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/oauth/signup`,
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/oauth/getJwt`,
                     {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            email: user?.email,
-                            name: user?.name,
-                            image: user?.image,
-                            oAuthId: user?.id
+                            email: session.user?.email
                         })
                     }
                 );
@@ -99,32 +111,11 @@ export const options: NextAuthOptions = {
                 }
                 const r = await response.json();
 
-                const oAuthuser = r.data;
+                session.user = r.data.user;
+                session.backendTokens = r.data.backendTokens;
 
-                // console.log("==oths", { oAuthuser, credentials, profile });
-
-                return oAuthuser;
-            } else {
-                return true;
+                return session;
             }
-        },
-        async jwt(props) {
-            const { token, user, account, profile } = props;
-
-            // console.log("==jwt", { token, user, account, profile });
-
-            if (user || account?.provider === 'google') return { ...token, ...user };
-
-            if (account) {
-                token.accessToken = account.access_token;
-            }
-            return token;
-            // if (new Date().getTime() < token.backendTokens?.expiresIn) return token;
-
-            // return await refreshToken(token);
-        },
-        async session({ token, session, user }) {
-            // console.log("==session", { token, session, user });
 
             session.user = token.user;
             session.backendTokens = token.backendTokens;

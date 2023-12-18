@@ -30,7 +30,7 @@
     "eslint-config-next": "13.4.12",
     "firebase": "^10.7.1",
     "next": "13.4.12",
-    "next-auth": "^4.22.3",
+    "next-auth": "^4.24.5",
     "nextjs-toploader": "^1.6.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
