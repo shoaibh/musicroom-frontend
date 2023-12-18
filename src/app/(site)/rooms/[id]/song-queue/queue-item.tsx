@@ -16,14 +16,14 @@ export const QueueItem: FC<{
     };
     isOwner: boolean;
 }> = ({ id, song, isOwner }) => {
-    const playSong = usePlaySong({ id });
+    const { playSong } = usePlaySong({ id });
 
     return (
         <div
             className="border relative border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground my-3  mx-10 lg:mx-5 p-2 rounded-lg cursor-pointer flex justify-start text-start items-center gap-[10px]"
-            onClick={() => {
+            onClick={async () => {
                 if (isOwner) {
-                    playSong(song);
+                    await playSong(song);
                 } else {
                     toast.error('only owners can play the song, you can update the list though');
                 }

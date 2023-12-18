@@ -111,7 +111,7 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                         />{' '}
                     </div>
                     <ReCAPTCHA
-                        sitekey="6LeHwTMpAAAAACkl1G2gMl59khTv9TfIurfhk5Y3"
+                        sitekey={process.env.NEXT_PUBLIC_RECAPTHA_SITE_KEY as string}
                         onChange={handleRecaptcha}
                     />
                 </CardContent>

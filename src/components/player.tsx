@@ -9,6 +9,7 @@ import { FaCircleInfo } from 'react-icons/fa6';
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
 import { usePlaySong } from './hooks/usePlaySong';
+import { BiLoaderCircle } from 'react-icons/bi';
 
 interface Props {
     audioUrl?: string;
@@ -225,22 +226,22 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) =>
         return video?.data?.data?.songQueue || [];
     }, [video]);
 
-    const playSong = usePlaySong({ id: roomId });
+    const { playSong, isPending } = usePlaySong({ id: roomId });
 
-    const onClickNext = useCallback(() => {
+    const onClickNext = useCallback(async () => {
         for (let i = 0; i < songQueue.length - 1; i++) {
             if (songQueue[i].video_id === videoId) {
-                playSong(songQueue[++i]);
+                await playSong(songQueue[++i]);
 
                 break;
             }
         }
     }, [songQueue, videoId]);
 
-    const onClickPrevious = useCallback(() => {
+    const onClickPrevious = useCallback(async () => {
         for (let i = 1; i < songQueue.length; i++) {
             if (songQueue[i].video_id === videoId) {
-                playSong(songQueue[--i]);
+                await playSong(songQueue[--i]);
                 break;
             }
         }
@@ -248,7 +249,8 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) =>
 
     return (
         <div className="player-component">
-            {audioUrl && (
+            {isPending && <BiLoaderCircle className="mr-2 h-4 w-4 animate-spin text-black" />}
+            {audioUrl && !isPending && (
                 <ReactAudioPlayer
                     ref={audioRef}
                     src={audioUrl}

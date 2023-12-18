@@ -5,6 +5,8 @@ import { SongDetails } from '@/components/songDetails';
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
 import { FaCircleInfo } from 'react-icons/fa6';
+import { usePlaySong } from '@/components/hooks/usePlaySong';
+import { BiLoaderCircle } from 'react-icons/bi';
 
 export default function AudioRoom({
     id,
@@ -30,6 +32,8 @@ export default function AudioRoom({
         enabled: !!videoId
     });
 
+    const { isPending } = usePlaySong({ id });
+
     return (
         <div className="w-full text-sm">
             {data?.data?.data && (
@@ -47,7 +51,12 @@ export default function AudioRoom({
                     {<SongDetails info={data?.data?.data} />}
                 </div>
             )}
-            {!data?.data?.data && (
+
+            {!data?.data?.data && isPending && (
+                <BiLoaderCircle className="mr-2 h-4 w-4 animate-spin text-black" />
+            )}
+
+            {!data?.data?.data && !isPending && (
                 <div className="flex items-center pl-0 pt-[20px] pb-[20px] gap-[10px] justify-center">
                     <FaCircleInfo />
                     {isOwner

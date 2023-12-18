@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 export const usePlaySong = ({ id }: { id?: string }) => {
     const { socket } = useSocket();
 
-    const { mutate: playSong } = useMutation({
+    const { mutateAsync: playSong, isPending } = useMutation({
         // eslint-disable-next-line
         mutationFn: async (song: {
             name: string;
@@ -28,5 +28,7 @@ export const usePlaySong = ({ id }: { id?: string }) => {
             toast.error(e.response?.data.message);
         }
     });
-    return playSong;
+
+    console.log('==sf', { isPending });
+    return { playSong, isPending };
 };

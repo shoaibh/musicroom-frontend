@@ -8,13 +8,13 @@ import { getStorage } from 'firebase/storage';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: 'AIzaSyBHjobCrP8mTSBfW-gsN5ky0PWialJf5iU',
-    authDomain: 'musicroom-14adf.firebaseapp.com',
-    projectId: 'musicroom-14adf',
-    storageBucket: 'musicroom-14adf.appspot.com',
-    messagingSenderId: '267719498384',
-    appId: '1:267719498384:web:938f295284ee086841d615',
-    measurementId: 'G-YP1R1N4JB4'
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_CONFIG_MEASUREMENT_ID
 };
 
 // Initialize Firebase
