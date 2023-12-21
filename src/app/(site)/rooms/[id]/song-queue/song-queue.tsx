@@ -1,14 +1,12 @@
 'use client';
 
-import React, { FC, useEffect } from 'react';
-import AudioRoom from './AudioRoom';
-import { AddSong } from '@/components/modals/add-song';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '@/app/libs/axios-config';
-import Image from 'next/image';
-import { QueueItem } from './queue-item';
 import { useSocket } from '@/Context/SocketProvider';
 import { useGetRoom } from '@/components/hooks/useGetRoom';
+import { AddSong } from '@/components/modals/add-song';
+import { useQueryClient } from '@tanstack/react-query';
+import { FC, useEffect } from 'react';
+import AudioRoom from './AudioRoom';
+import { QueueItem } from './queue-item';
 
 interface Props {
     id: string;

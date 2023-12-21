@@ -1,11 +1,11 @@
 'use client';
 
-import { useGetRoom, useGetRoomUsers } from '@/components/hooks/useGetRoom';
-import React, { FC, useEffect, useMemo } from 'react';
-import { QueueUser } from './queue-user';
-import { useQueryClient } from '@tanstack/react-query';
 import { useSocket } from '@/Context/SocketProvider';
-import toast from 'react-hot-toast';
+import { useGetRoomUsers } from '@/components/hooks/useGetRoom';
+import { useQueryClient } from '@tanstack/react-query';
+import { FC, useEffect } from 'react';
+import { QueueUser } from './queue-user';
+import { IUser } from '@/app/Constant';
 
 interface Props {
     id: string;
@@ -47,7 +47,7 @@ export const JoinedUsers: FC<Props> = ({ id, jwt, isOwner, user }) => {
         <>
             <h2 className="text-xl mt-[18px]">Joined Users</h2>
 
-            {roomUsers?.map((user: any) => (
+            {roomUsers?.map((user: IUser) => (
                 <QueueUser
                     key={user?.user?._id}
                     image={user?.user?.image}

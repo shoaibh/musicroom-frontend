@@ -1,11 +1,9 @@
 import { options } from '@/app/api/auth/[...nextauth]/options';
+import LogoutButton from '@/components/LogoutButton';
 import { Header } from '@/components/header';
 import { getServerSession } from 'next-auth';
-import { AllRooms } from './rooms/all-rooms';
 import { CreateRoom } from '../../components/modals/create-room';
-import { Button } from '@/components/ui/button';
-import { signOut } from 'next-auth/react';
-import LogoutButton from '@/components/LogoutButton';
+import { AllRooms } from './rooms/all-rooms';
 
 export default async function Home() {
     const session = await getServerSession(options);

@@ -7,6 +7,7 @@ interface Props {
     chooseSong: any;
 }
 
+
 const SearchResultComponent: FC<Props> = ({ songInfo, chooseSong }) => {
     return (
         <div

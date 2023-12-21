@@ -1,19 +1,11 @@
 'use client';
 
+import { IMessage } from '@/app/Constant';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 
 const MessageBox: React.FC<{
-    data: {
-        sender: {
-            _id: string;
-            name: string;
-            email: string;
-            image: string;
-        };
-        message: string;
-        createdAt: number;
-    };
+    data: IMessage;
     isOwn: boolean;
 }> = ({ data, isOwn = false }) => {
     const container = clsx('flex gap-3 p-4', isOwn && 'justify-end');

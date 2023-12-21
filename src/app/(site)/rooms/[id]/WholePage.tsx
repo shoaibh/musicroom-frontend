@@ -6,19 +6,12 @@ import { BackButton } from '@/components/backButton';
 import { Logo } from '@/components/logo';
 import { Session } from 'next-auth';
 import { FC, useEffect, useState } from 'react';
-import { IoIosArrowUp } from 'react-icons/io';
-import { IoClose } from 'react-icons/io5';
 import { User } from '../../header/user';
+import { MobilePage } from './MobilePage';
 import { ChatComponent } from './chat/chat-component';
 import { JoinedUsers } from './joined-users/joined-users';
 import { JoinedUsersMobile } from './joined-users/joined-users-mobile';
 import { SongQueue } from './song-queue/song-queue';
-import axios from '@/app/libs/axios-config';
-import { useQuery } from '@tanstack/react-query';
-import { useGetRoom } from '@/components/hooks/useGetRoom';
-import Image from 'next/image';
-import { MusicBar } from '@/components/music/music-bar';
-import { MobilePage } from './MobilePage';
 
 export const WholePage: FC<{
     session: Session | null;

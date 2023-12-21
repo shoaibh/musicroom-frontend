@@ -1,6 +1,5 @@
 'use client';
 
-import SocialButton from '@/components/social-button';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -12,17 +11,15 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { signIn } from 'next-auth/react';
+import { debounce } from '@/lib/utils';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
-import { toast } from 'react-hot-toast';
-import { BsGoogle } from 'react-icons/bs';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../../../firebaseConfig';
 import ReCAPTCHA from 'react-google-recaptcha';
-import Image from 'next/image';
-import { debounce } from '@/lib/utils';
+import { toast } from 'react-hot-toast';
+import { storage } from '../../../../../firebaseConfig';
 
 interface FormData {
     name: string;
@@ -54,12 +51,14 @@ export const SignUpForm: FC = () => {
                 setPasswordError('Password must be at least 8 characters');
             } else if (!/[A-Z]/.test(value)) {
                 setPasswordError('Password must contain at least one capital letter');
+                // eslint-disable-next-line
             } else if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(value)) {
                 setPasswordError('Password must contain at least one special character');
             } else {
                 setPasswordError('');
             }
         }, 300),
+        // eslint-disable-next-line
         []
     );
 
@@ -75,6 +74,7 @@ export const SignUpForm: FC = () => {
     const [imageFile, setImageFile] = useState<File>();
     const [imageUrl, setImageUrl] = useState<string>('');
 
+    // eslint-disable-next-line
     const handleSelectedFile = (files: any) => {
         if (files && files[0].size < 10000000) {
             setImageFile(files[0]);
@@ -88,6 +88,7 @@ export const SignUpForm: FC = () => {
 
     const [recaptchaValue, setRecaptchaValue] = useState(null);
 
+    // eslint-disable-next-line
     const handleRecaptcha = (value: any) => {
         // Store the reCAPTCHA response in state or use it as needed
         setRecaptchaValue(value);
@@ -103,7 +104,6 @@ export const SignUpForm: FC = () => {
 
         try {
             setIsLoading(true);
-            console.log('==here');
             setTimeout(() => {}, 3000);
             if (!recaptchaValue) {
                 toast.error('reCAPTCHA not verified');
@@ -122,11 +122,9 @@ export const SignUpForm: FC = () => {
                     (snapshot) => {
                         switch (snapshot.state) {
                             case 'paused':
-                                console.log('Upload is paused');
                                 break;
                             case 'running':
                                 setIsLoading(true);
-                                console.log('Upload is running');
                                 break;
                         }
                     },
@@ -173,7 +171,6 @@ export const SignUpForm: FC = () => {
             setIsLoading(false);
         }
     };
-    console.log('==', { isLoading });
 
     return (
         <Card>
@@ -244,7 +241,7 @@ export const SignUpForm: FC = () => {
                         />
                     </div>
                     {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                        <span className="text-red-500 text-xs">passwords don't match</span>
+                        <span className="text-red-500 text-xs">passwords don&apos;t match</span>
                     )}
                     <div className=" gap-2 flex items-center min-h-[55px]">
                         <input

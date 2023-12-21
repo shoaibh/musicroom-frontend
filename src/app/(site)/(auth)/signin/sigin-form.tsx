@@ -70,6 +70,7 @@ export const SignInForm: FC<Props> = ({ providers }) => {
         }
     };
 
+    // eslint-disable-next-line
     const handleRecaptcha = (value: any) => {
         // Store the reCAPTCHA response in state or use it as needed
         setRecaptchaValue(value);

@@ -1,14 +1,13 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useMemo } from 'react';
-import { Room } from './room';
-import axios from '@/app/libs/axios-config';
+import { useMainContext } from '@/Context/MainContext';
 import { useSocket } from '@/Context/SocketProvider';
 import { IRoom } from '@/app/Constant';
+import axios from '@/app/libs/axios-config';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
 import { MyRooms } from './my-rooms';
 import { RecommendedRooms } from './recommended-rooms';
-import { useMainContext } from '@/Context/MainContext';
 
 export const AllRooms = ({ jwt, userId }: { jwt: string; userId: string }) => {
     const queryClient = useQueryClient();

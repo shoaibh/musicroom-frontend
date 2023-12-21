@@ -1,15 +1,14 @@
 'use client';
 
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSocket } from '@/Context/SocketProvider';
+import axios from '@/app/libs/axios-config';
+import { useQuery } from '@tanstack/react-query';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactAudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
-import './player.css';
-import { useSocket } from '@/Context/SocketProvider';
-import { FaCircleInfo } from 'react-icons/fa6';
-import { useQuery } from '@tanstack/react-query';
-import axios from '@/app/libs/axios-config';
-import { usePlaySong } from './hooks/usePlaySong';
 import { BiLoaderCircle } from 'react-icons/bi';
+import { usePlaySong } from './hooks/usePlaySong';
+import './player.css';
 
 interface Props {
     audioUrl?: string;
@@ -236,7 +235,7 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) =>
                 break;
             }
         }
-    }, [songQueue, videoId]);
+    }, [songQueue, videoId, playSong]);
 
     const onClickPrevious = useCallback(async () => {
         for (let i = 1; i < songQueue.length; i++) {
@@ -245,7 +244,7 @@ const Player: FC<Props> = ({ audioUrl, isOwner, roomId, user, jwt, videoId }) =>
                 break;
             }
         }
-    }, [songQueue, videoId]);
+    }, [songQueue, videoId, playSong]);
 
     return (
         <div className="player-component">

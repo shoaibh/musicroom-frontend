@@ -1,8 +1,5 @@
 import { options } from '@/app/api/auth/[...nextauth]/options';
-import { BackButton } from '@/components/backButton';
-import { Logo } from '@/components/logo';
 import { getServerSession } from 'next-auth';
-import { User } from '../../header/user';
 import { WholePage } from './WholePage';
 
 export default async function PlayerRoom({ params }: { params: { id: string } }) {

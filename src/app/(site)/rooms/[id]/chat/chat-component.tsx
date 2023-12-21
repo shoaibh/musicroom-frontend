@@ -8,6 +8,7 @@ import { HiPaperAirplane } from 'react-icons/hi2';
 import MessageBox from './message-box';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
+import { IMessage } from '@/app/Constant';
 
 export const ChatComponent: FC<{
     user: {
@@ -49,7 +50,7 @@ export const ChatComponent: FC<{
         return () => {
             socket.off('receive-message');
         };
-    }, [roomId, isConnected, socket]);
+    }, [roomId, isConnected, socket, queryClient]);
 
     const sendMessage = useCallback(() => {
         if (!socket) return;
@@ -68,7 +69,7 @@ export const ChatComponent: FC<{
         <div className="overflow-scroll flex-1">
             <div className="h-full flex flex-col">
                 <div className="flex-1 overflow-y-auto bg-white p-4 shadow-inner">
-                    {messages?.data?.map((msg: any, index: any) => {
+                    {messages?.data?.map((msg: IMessage, index: number) => {
                         const lastMessage = messages?.data.length - 1 === index;
                         return (
                             <div key={index} ref={lastMessage ? lastMessageRef : null}>

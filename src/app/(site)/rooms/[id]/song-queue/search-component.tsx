@@ -1,14 +1,14 @@
 'use client';
 
-import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
-import SearchResultComponent from './search-result-component';
+import { useSocket } from '@/Context/SocketProvider';
+import axios from '@/app/libs/axios-config';
 import { Input } from '@/components/ui/input';
 import { debounce } from '@/lib/utils';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Dispatch, FC, SetStateAction, useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from '@/app/libs/axios-config';
-import { useSocket } from '@/Context/SocketProvider';
 import { LiaSpinnerSolid } from 'react-icons/lia';
+import SearchResultComponent from './search-result-component';
 
 interface Props {
     jwt: string;
@@ -25,7 +25,6 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner, setOpen }) => {
     const { mutate: chooseSong } = useMutation({
         // eslint-disable-next-line
         mutationFn: async (song: any) => {
-            console.log('==', { song });
             const response = await axios.put(`/room/update_queue/${id}`, {
                 song: {
                     name: song.title,
@@ -58,9 +57,8 @@ const SearchComponent: FC<Props> = ({ jwt, id, isOwner, setOpen }) => {
         refetchOnWindowFocus: false // Prevent automatic refetching on window focus
     });
 
+    // eslint-disable-next-line
     const debouncedF = useCallback(
-        // eslint-disable-next-line
-
         debounce((value) => {
             if (value.length > 2) {
                 setDebouncedValue(value);

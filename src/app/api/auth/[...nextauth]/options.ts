@@ -1,5 +1,4 @@
 import { NextAuthOptions } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -43,7 +42,7 @@ export const options: NextAuthOptions = {
                 }
             },
             async authorize(credentials) {
-                console.log('==', { credentials });
+                // console.log('==', { credentials });
                 const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`, {
                     method: 'POST',
                     headers: {

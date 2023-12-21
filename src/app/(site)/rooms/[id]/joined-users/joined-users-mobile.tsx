@@ -20,8 +20,6 @@ interface Props {
 export const JoinedUsersMobile: FC<Props> = ({ setShowMobileUsers, id, jwt, isOwner, user }) => {
     const divRef = useRef<HTMLDivElement>(null);
 
-    console.log('==joine');
-
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (divRef.current && !divRef.current.contains(event.target as Node)) {
@@ -34,6 +32,7 @@ export const JoinedUsersMobile: FC<Props> = ({ setShowMobileUsers, id, jwt, isOw
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -43,6 +42,7 @@ export const JoinedUsersMobile: FC<Props> = ({ setShowMobileUsers, id, jwt, isOw
             onBlur={() => {
                 setShowMobileUsers(false);
             }}
+            // eslint-disable-next-line
             tabIndex={0}>
             <div
                 className="absolute top-[10px] right-[10px] cursor-pointer"

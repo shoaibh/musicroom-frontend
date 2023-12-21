@@ -19,3 +19,29 @@ export interface Owner {
     roomIds: string[];
     roomOwned: boolean;
 }
+
+export interface IMessage {
+    sender: {
+        _id: string;
+        name: string;
+        email: string;
+        image: string;
+        createdAt: string;
+        updatedAt: string;
+    };
+    message: string;
+    createdAt: number;
+    _id: string;
+}
+
+export interface IUser {
+    user: {
+        createdAt: string;
+        email: string;
+        image: string;
+        name: string;
+        updatedAt: string;
+        _id: string;
+    };
+    _id: string;
+}

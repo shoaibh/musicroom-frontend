@@ -1,8 +1,7 @@
 import { useSocket } from '@/Context/SocketProvider';
-import { useMutation } from '@tanstack/react-query';
 import axios from '@/app/libs/axios-config';
+import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { AxiosError } from 'axios';
 
 export const usePlaySong = ({ id }: { id?: string }) => {
     const { socket } = useSocket();
@@ -29,6 +28,5 @@ export const usePlaySong = ({ id }: { id?: string }) => {
         }
     });
 
-    console.log('==sf', { isPending });
     return { playSong, isPending };
 };
