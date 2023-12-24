@@ -56,6 +56,7 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                 recaptchaValue,
                 redirect: false
             });
+            console.log('==', { callback });
 
             if (callback?.error) {
                 toast.error('Something went wrong');
@@ -64,6 +65,7 @@ export const SignInForm: FC<Props> = ({ providers }) => {
                 router.push('/');
             }
         } catch (e) {
+            console.log('==', { e });
             toast.error(`Something went wrong, ${e}`);
         } finally {
             setIsLoading(false);
@@ -75,7 +77,6 @@ export const SignInForm: FC<Props> = ({ providers }) => {
         // Store the reCAPTCHA response in state or use it as needed
         setRecaptchaValue(value);
     };
-
     return (
         <Card>
             <form onSubmit={handleSubmit}>

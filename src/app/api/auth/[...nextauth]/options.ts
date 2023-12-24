@@ -54,6 +54,7 @@ export const options: NextAuthOptions = {
                         recaptchaValue: credentials?.recaptchaValue
                     })
                 });
+                console.log('==', { response });
                 if (response.status === 401) {
                     return null;
                 }
@@ -68,7 +69,7 @@ export const options: NextAuthOptions = {
             }
         })
     ],
-    debug: process.env.NODE_ENV === 'development',
+    debug: true,
     theme: {
         colorScheme: 'dark', // "auto" | "dark" | "light"
         brandColor: '', // Hex color code
