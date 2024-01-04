@@ -42,30 +42,37 @@ export const options: NextAuthOptions = {
                 }
             },
             async authorize(credentials) {
-                // console.log('==', { credentials });
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: credentials?.email,
-                        password: credentials?.password,
-                        recaptchaValue: credentials?.recaptchaValue
-                    })
-                });
-                console.log('==', { response });
-                if (response.status === 401) {
-                    return null;
-                }
-                if (response.status !== 200) {
-                    throw new Error('something went wrong');
-                }
-                const r = await response.json();
+                console.log('==', { credentials, env: process.env.NEXT_PUBLIC_BACKEND_URL });
+                try {
+                    const response = await fetch(
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/login`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: credentials?.email,
+                                password: credentials?.password,
+                                recaptchaValue: credentials?.recaptchaValue
+                            })
+                        }
+                    );
+                    console.log('==', { response });
+                    if (response.status === 401) {
+                        return null;
+                    }
+                    if (response.status !== 200) {
+                        throw new Error('something went wrong');
+                    }
+                    const r = await response.json();
 
-                const user = r.data;
+                    const user = r.data;
 
-                return user;
+                    return user;
+                } catch (e) {
+                    console.log(e);
+                }
             }
         })
     ],
@@ -91,8 +98,6 @@ export const options: NextAuthOptions = {
             // return await refreshToken(token);
         },
         async session({ token, session, user }) {
-            // console.log('==session', { token, session, user });
-
             if (!token.user && session?.user) {
                 const response = await fetch(
                     `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/oauth/getJwt`,
@@ -102,7 +107,9 @@ export const options: NextAuthOptions = {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            email: session.user?.email
+                            email: session.user?.email,
+                            name: session.user?.name,
+                            image: session.user?.image
                         })
                     }
                 );
